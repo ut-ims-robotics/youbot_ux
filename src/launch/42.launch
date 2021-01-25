@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+	<include file="$(find youbot_driver_ros_interface)/launch/youbot_driver.launch" />
+	<include file="$(find ds4_driver)/launch/ds4_driver.launch" />
+	<include file="$(find youbot_moveit)/launch/move_group.launch" />
+	
+	<node pkg="youbot_ux" name="youbot_states" type="youbot_states.py"/>
+	<node pkg="youbot_ux" name="youbot_states_feedback" type="youbot_states_feedback.py" output="screen"/>
+	<node pkg="youbot_ux" name="status_to_joy" type="status_to_joy.py"/>
+	<node pkg="youbot_ux" name="velocity_move_youbot" type="velocity_move_youbot.py" output="screen"/>
+	<node pkg="youbot_ux" name="velocity_move_youbot_grasp" type="velocity_move_youbot_grasp.py" output="screen"/>
+	<node pkg="youbot_ux" name="youbot_drive_joy" type="youbot_drive_joy.py" output="screen"/>
+	
+</launch>
+
