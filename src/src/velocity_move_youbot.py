@@ -17,7 +17,8 @@ from brics_actuator.msg import JointVelocities
 from brics_actuator.msg import JointPositions
 from brics_actuator.msg import JointValue
 from sensor_msgs.msg import Joy
-from std_msgs.msg import String
+from std_msgs.msg import String, Int8
+
         
 
 jointMax= [5.840139, 2.617989, -0.0157081, 3.42919, 5.641589]
@@ -36,17 +37,17 @@ armJointPosCandle = np.array([2.9496, 1.1344, -2.5482, 1.789, 2.9234])
 class YoubotArm:
 	def __init__(self):
 		self.arm_joint_pub = rospy.Publisher("arm_1/arm_controller/velocity_command", JointVelocities, queue_size=0)
+		self.arm_joint_select_pub = rospy.Publisher('joint_select', Int8, queue_size=1)
 		self.state_sub = rospy.Subscriber(rospy.get_param('~sub_topic', "state"), String, self.getState)
 		self.joy_sub = rospy.Subscriber(rospy.get_param('~sub_topic', "joy"), Joy, self.sub_joy_states)
 		self.stateMessage = "safemode"
 
 		self.prevClick = 0
-		self.currentSelected = 0
+		self.currentSelected = 1
+		self.prevSelected = 0 
 		self.jointSelectorUp = 0
 		self.jointSelectorDown = 0
 		self.jointMoverPosition = 0.0	
-
-		self.gripperCurrent = 0.007
 
 		# Give the publishers time to get setup before trying to do any actual work.
         	rospy.sleep(2)
@@ -58,21 +59,23 @@ class YoubotArm:
 	def sub_joy_states(self, joy):
 		self.jointSelectorUp = joy.buttons[15]
 		self.jointSelectorDown = joy.buttons[17]
-		self.jointMoverPosition = joy.axes[0]
+		self.jointAxisButtonX1 = -joy.axes[0]
+		self.jointAxisButtonX2 = joy.axes[2]
+		self.jointAxisButtonY = joy.axes[1]
 		
 
 	def publish_arm_joint_velocities(self):
 		if self.stateMessage == "manipulatorPerJoint":
 
 			if self.prevClick == 0 and (self.jointSelectorUp == 1 or self.jointSelectorDown == 1):
-				if jointSelectorUp:
+				if self.jointSelectorUp:
 					self.currentSelected += 1
-					if self.currentSelected > 4:
-						self.currentSelected = 4
+					if self.currentSelected > 3:
+						self.currentSelected = 3
 				if self.jointSelectorDown:
 					self.currentSelected -= 1
-					if self.currentSelected < 0:
-						self.currentSelected = 0
+					if self.currentSelected < 1:
+						self.currentSelected = 1
 				self.prevClick = 1
 
 			if self.jointSelectorUp == 0 and self.jointSelectorDown == 0:
@@ -86,7 +89,9 @@ class YoubotArm:
 			joint5 = 0.0
 
 			joint_velocities = [joint1, joint2, joint3, joint4, joint5]
-			joint_velocities[self.currentSelected] = 0.5*(self.jointMoverPosition)
+			joint_velocities[self.currentSelected] = 0.5*(self.jointAxisButtonY)
+			joint_velocities[0] = 0.5*(self.jointAxisButtonX1)
+			joint_velocities[4] = 0.5*(self.jointAxisButtonX2)
 
 			jointCommands = []
 
@@ -104,6 +109,9 @@ class YoubotArm:
 			desiredVelocities = JointVelocities()
 			desiredVelocities.velocities = jointCommands
 			self.arm_joint_pub.publish(desiredVelocities)
+			if self.prevSelected != self.currentSelected:
+				self.arm_joint_select_pub.publish(self.currentSelected)
+				self.prevSelected = self.currentSelected
 		else:
 			joint1 = 0.0
 			joint2 = 0.0
@@ -129,6 +137,8 @@ class YoubotArm:
 			desiredVelocities = JointVelocities()
 			desiredVelocities.velocities = jointCommands
 			self.arm_joint_pub.publish(desiredVelocities)
+			self.prevSelected = 0 # so when state reselected, user gets notification of current selected join immediately
+			
 			
 	def main(self):
 		while not rospy.is_shutdown():

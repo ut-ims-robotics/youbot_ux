@@ -52,7 +52,7 @@ class YoubotArm:
 		self.prevClick = 0
 		self.currentSelected = 0
 
-		self.gripperCurrent = 0.007
+		self.gripperCurrent = 0.0
 		self.amountOfChange = 0.0
 
 		# Give the publishers time to get setup before trying to do any actual work.

@@ -25,12 +25,12 @@ class YoubotDrive:
 	def publish_cmd_velocities(self, joy):
 		if self.stateMessage == "driving":
 			vel_cmd = Twist()
-			vel_cmd.linear.x = joy.axes[1]
-			vel_cmd.linear.y = joy.axes[0]
+			vel_cmd.linear.x = joy.axes[1]*0.5
+			vel_cmd.linear.y = joy.axes[0]*0.5
 			vel_cmd.linear.z = 0
 			vel_cmd.angular.x = 0
 			vel_cmd.angular.y = 0
-			vel_cmd.angular.z = joy.axes[2]
+			vel_cmd.angular.z = joy.axes[2]*0.5
 			self.cmd_vel_pub.publish(vel_cmd)
 		else:
 			self.publish_cmd_velocities_stop()
