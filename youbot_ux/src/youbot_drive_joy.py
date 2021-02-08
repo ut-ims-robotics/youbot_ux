@@ -20,7 +20,7 @@ class YoubotDrive:
 	
 	def getState(self, string):
 		self.stateMessage = string.data
-		print(self.stateMessage)
+		#print(self.stateMessage)
 
 	def publish_cmd_velocities(self, joy):
 		if self.stateMessage == "driving":

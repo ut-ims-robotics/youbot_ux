@@ -47,7 +47,7 @@ class Driving(smach.State):
 
 class ManipulatorPerJoint(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes=['toDriving', 'toManipulatorPerJoint', 'toSafeMode']) 
+        smach.State.__init__(self, outcomes=['toTrajectoryRecord', 'toManipulatorPerJoint', 'toSafeMode']) 
 	self.regimeButtonState = 0
 	self.safeButtonSate = 0
 	self.subscriber = rospy.Subscriber(rospy.get_param('~sub_topic', "joy"), Joy, self.getJoyValues)
@@ -70,8 +70,8 @@ class ManipulatorPerJoint(smach.State):
         if self.regimeButtonState == 1:
 	    while self.regimeButtonState == 1: # wait until button release
 		pass
-	    #rospy.loginfo('Going to Driving')
-            return 'toDriving'
+	    #rospy.loginfo('Going to TrajectoryRecord')
+            return 'toTrajectoryRecord'
 	elif now.secs - self.statusTime > 1 or self.safeButtonSate == 1:
 	    while self.safeButtonSate == 1: # wait until button release
 		pass
@@ -80,6 +80,40 @@ class ManipulatorPerJoint(smach.State):
 	    #rospy.loginfo('Going to ManipulatorPerJoint')
 	    return 'toManipulatorPerJoint' # stay in current regime
 
+class TrajectoryRecord(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, outcomes=['toDriving', 'toTrajectoryRecord', 'toSafeMode']) 
+	self.regimeButtonState = 0
+	self.safeButtonSate = 0
+	self.subscriber = rospy.Subscriber(rospy.get_param('~sub_topic', "joy"), Joy, self.getJoyValues)
+	self.pub = rospy.Publisher('state', String, queue_size=1)
+	self.sub_status = rospy.Subscriber('status', Status, self.statusTime, queue_size=1)
+	self.statusTime = 0
+	self.rate = rospy.Rate(10) # 10hz
+	
+    def statusTime(self, status):
+	self.statusTime = status.header.stamp.secs
+
+    def getJoyValues(self, joy):
+	self.regimeButtonState = joy.buttons[2]
+	self.safeButtonSate = joy.buttons[10]
+    
+    def execute(self, userdata):
+	self.pub.publish("trajectoryRecord")
+	now = rospy.get_rostime()
+	self.rate.sleep()
+        if self.regimeButtonState == 1:
+	    while self.regimeButtonState == 1: # wait until button release
+		pass
+	    #rospy.loginfo('Going to Driving')
+            return 'toDriving'
+	elif now.secs - self.statusTime > 1 or self.safeButtonSate == 1:
+	    while self.safeButtonSate == 1: # wait until button release
+		pass
+	    return 'toSafeMode'
+	else:
+	    #rospy.loginfo('Going to ManipulatorPerJoint')
+	    return 'toTrajectoryRecord' # stay in current regime
 
 class SafeMode(smach.State):
     def __init__(self):
@@ -117,12 +151,16 @@ def main():
     with sm:
         # Add states to the container
         smach.StateMachine.add('Driving', Driving(), 
-                               transitions={'toManipulatorPerJoint':'ManipulatorPerJoint',
-					    'toDriving':'Driving',
-					    'toSafeMode':'SafeMode'})
+                               transitions={'toManipulatorPerJoint':'ManipulatorPerJoint', #1 next regime
+					    'toDriving':'Driving',			   #2 current class regime
+					    'toSafeMode':'SafeMode'})			   #3 safe mode
         smach.StateMachine.add('ManipulatorPerJoint', ManipulatorPerJoint(), 
-                               transitions={'toDriving':'Driving',
+                               transitions={'toTrajectoryRecord':'TrajectoryRecord',
 					    'toManipulatorPerJoint': 'ManipulatorPerJoint',
+					    'toSafeMode':'SafeMode'})
+        smach.StateMachine.add('TrajectoryRecord', TrajectoryRecord(), 
+                               transitions={'toDriving':'Driving',
+					    'toTrajectoryRecord': 'TrajectoryRecord',
 					    'toSafeMode':'SafeMode'})
         smach.StateMachine.add('SafeMode', SafeMode(), 
                                transitions={'toDriving':'Driving',
