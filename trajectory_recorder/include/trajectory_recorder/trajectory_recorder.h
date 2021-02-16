@@ -9,7 +9,6 @@
 #include "trajectory_msgs/JointTrajectory.h"
 #include "trajectory_recorder/TrajectoryRecorderControl.h"
 #include "trajectory_recorder/GetRecordedTrajectory.h"
-#include "trajectory_recorder/SendHackedTrajectory.h"
 
 namespace trajectory_recorder
 {
@@ -53,14 +52,10 @@ private:
   bool getRecordedTrajectoryCb(GetRecordedTrajectory::Request& req
   , GetRecordedTrajectory::Response& res);
 
-  bool sendHackedTrajectoryCb(SendHackedTrajectory::Request& req
-  , SendHackedTrajectory::Response& res);
-
   ros::NodeHandle nh_;
   ros::Subscriber joint_states_sub_;
   ros::ServiceServer recorder_control_server_;
   ros::ServiceServer get_trajectory_server_;
-  ros::ServiceServer trajectory_playback_server_;
   ros::Time time_from_last_point_;
   ros::Time recording_start_time_;
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(trajectory_recorder)
+project(trajectory_replayer)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -9,14 +9,12 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   std_msgs
-  std_srvs
   trajectory_msgs
 )
 
 add_service_files(
   FILES
-  TrajectoryRecorderControl.srv
-  GetRecordedTrajectory.srv
+  SendHackedTrajectory.srv
 )
 
 generate_messages(
@@ -26,7 +24,7 @@ generate_messages(
 
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES trajectory_recorder
+#  LIBRARIES trajectory_replayer
 #  CATKIN_DEPENDS message_generation roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
@@ -37,16 +35,16 @@ include_directories(
 )
 
 # Action engine node
-add_executable(trajectory_recorder_node
-  src/trajectory_recorder_node.cpp
-  src/trajectory_recorder.cpp
+add_executable(trajectory_replayer_node
+  src/trajectory_replayer_node.cpp
+  src/trajectory_replayer.cpp
 )
 
-add_dependencies(trajectory_recorder_node
+add_dependencies(trajectory_replayer_node
   ${catkin_EXPORTED_TARGETS}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
 )
 
-target_link_libraries(trajectory_recorder_node
+target_link_libraries(trajectory_replayer_node
   ${catkin_LIBRARIES}
 )

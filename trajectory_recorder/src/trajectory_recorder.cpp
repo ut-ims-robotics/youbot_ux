@@ -11,8 +11,6 @@
 #include <boost/units/systems/si/length.hpp>
 #include <boost/units/systems/si/plane_angle.hpp>
 
-ros::Publisher armPositionsPublisher;
-
 
 namespace trajectory_recorder
 {
@@ -56,9 +54,6 @@ TrajectoryRecorder::TrajectoryRecorder(const std::string& joint_states_topic, fl
     , &TrajectoryRecorder::getRecordedTrajectoryCb
     , this);
 
-    trajectory_playback_server_ = nh_.advertiseService("trajectory_playback"
-    , &TrajectoryRecorder::sendHackedTrajectoryCb
-    , this);
   } 
   ROS_INFO_STREAM("The trajectory recorder is initialized");
 }
@@ -222,73 +217,6 @@ bool TrajectoryRecorder::getRecordedTrajectoryCb(GetRecordedTrajectory::Request&
     res.trajectory = recorded_trajectory_;
   }
   return true;
-}
-
-//void sendHackedTrajectory(const trajectory_msgs::JointTrajectory traj, bool joint1changed, double joint1value)
-bool TrajectoryRecorder::sendHackedTrajectoryCb(SendHackedTrajectory::Request& req
-, SendHackedTrajectory::Response& res)
-{
-	// recorded_trajectory_ may be the values and all for use
-	int numberOfJoints = 5;
-	bool joint1changed = false;
-	double joint1value = 0.0;
-	armPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 100);
-
-	trajectory_msgs::JointTrajectory traj = recorded_trajectory_;
-	brics_actuator::JointPositions command;	
-        std::vector <brics_actuator::JointValue> armJointPositions;
-        armJointPositions.resize(numberOfJoints);
-
-        ROS_INFO("** trajectory hack **");
-
-        for (int i=0; i<numberOfJoints; i++)
-        {
-            armJointPositions[i].joint_uri = traj.joint_names[i];
-            armJointPositions[i].unit = boost::units::to_string(boost::units::si::radians);
-
-            if (i == 0)
-            {
-                if (joint1changed)
-                    armJointPositions[i].value = joint1value;
-                else
-                    armJointPositions[i].value = traj.points[0].positions[i];
-            }
-            else
-            {
-                armJointPositions[i].value = traj.points[0].positions[i];
-            }
-        }
-
-        ROS_INFO("sendHackedTrajectory: Moving to the starting point of the trajectory");
-        command.positions = armJointPositions;
-        armPositionsPublisher.publish(command);
-
-        ros::Duration(1.0).sleep();
-
-        for (int j=0; j<traj.points.size(); j++)
-        {
-            for (int i=0; i<numberOfJoints; i++)
-            {
-                if (i == 0)
-                {
-                    if (joint1changed)
-                        armJointPositions[0].value = joint1value;
-                    else
-                        armJointPositions[0].value = traj.points[j].positions[0];
-                }
-                else
-                {
-                    armJointPositions[i].value = traj.points[j].positions[i];
-                }
-            }
-
-            command.positions = armJointPositions;
-            armPositionsPublisher.publish(command);
-            ros::Duration(0.035).sleep();
-        }
-        ROS_INFO("sendHackedTrajectory: Finished");
-	res.response_message = "sendHackedTrajectory: Finished";
-	return true;
 }
 
 } // trajectory_recorder namespace
