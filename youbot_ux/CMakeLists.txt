@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(youbot_ux)
+add_compile_options(-std=c++11 -ggdb)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -9,11 +10,13 @@ project(youbot_ux)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  roslib
   rospy
   std_msgs
   tf
   youbot_description
   smach
+  temoto_er_manager
 )
 
 ## System dependencies are found with CMake's conventions
@@ -137,6 +140,10 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/youbot_ux_node.cpp)
+
+add_executable(youbot_ux 
+  src/er_client_node.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
