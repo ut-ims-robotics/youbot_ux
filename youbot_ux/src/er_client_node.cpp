@@ -22,6 +22,7 @@ int main(int argc, char** argv)
    * to the constructor of ERM interface tells it whether it should be initialised immediately,
    * or that's done later by the user.
    */
+  ROS_INFO("ermi init");
   temoto_er_manager::ERManagerInterface ermi(true);
   ros::NodeHandle nh;
   ros::Subscriber stateSub = nh.subscribe("state", 1, stateCallback);
@@ -32,11 +33,15 @@ int main(int argc, char** argv)
    * arguments can also be passed as a third std::string variable. The same method can be used to
    * load ROS launch files
    */
-  
-  temoto_er_manager::LoadExtResource load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy");
-  temoto_er_manager::LoadExtResource load_resource_msg_velocity = ermi.loadRosResource("youbot_ux", "velocity_move_youbot");
-  temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp = ermi.loadRosResource("youbot_ux", "velocity_move_youbot_grasp");
-  temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record");
+  ROS_INFO("Load youbot_drive_joy");
+  ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py");
+  //temoto_er_manager::LoadExtResource load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy");
+  ROS_INFO("Load velocity_move_youbot");
+  temoto_er_manager::LoadExtResource load_resource_msg_velocity = ermi.loadRosResource("youbot_ux", "velocity_move_youbot.py");
+  ROS_INFO("Load velocity_move_youbot_grasp");
+  temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp = ermi.loadRosResource("youbot_ux", "velocity_move_youbot_grasp.py");
+  ROS_INFO("Load youbot_trajectory_record");
+  temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record.py");
 
   /*
   if (currentState != lastState) {
@@ -66,5 +71,6 @@ int main(int argc, char** argv)
    * Note that this time the "unloadResource" was not invoked, as the destructor of "ermi" automatically
    * unloads all loaded resources.
    */ 
+  while (true);
   return 0;
 }

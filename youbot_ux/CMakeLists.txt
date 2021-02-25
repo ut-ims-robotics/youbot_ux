@@ -23,10 +23,6 @@ find_package(catkin REQUIRED COMPONENTS
 # find_package(Boost REQUIRED COMPONENTS system)
 
 
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -126,6 +122,20 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+## Uncomment this if the package has a setup.py. This macro ensures
+## modules and global scripts declared therein get installed
+## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
+catkin_install_python(PROGRAMS 
+    src/youbot_drive_joy.py
+    src/status_to_joy.py
+    src/velocity_move_youbot.py
+    src/velocity_move_youbot_grasp.py
+    src/youbot_states.py
+    src/youbot_states_feedback.py
+    src/youbot_trajectory_record.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/youbot_ux.cpp
@@ -141,8 +151,17 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/youbot_ux_node.cpp)
 
-add_executable(youbot_ux 
+add_executable(er_client_node 
   src/er_client_node.cpp
+)
+
+add_dependencies(er_client_node
+  ${catkin_EXPORTED_TARGETS}
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+)
+
+target_link_libraries(er_client_node
+  ${catkin_LIBRARIES}
 )
 
 ## Rename C++ executable without prefix
@@ -166,13 +185,6 @@ add_executable(youbot_ux
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
