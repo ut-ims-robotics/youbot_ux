@@ -47,7 +47,7 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 	armPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 100);
 
 	std_srvs::Empty empty;
-	
+	trajectory_msgs::JointTrajectory traj;
 
 	ros::NodeHandle n;
 	ros::ServiceClient client = n.serviceClient<trajectory_recorder::GetRecordedTrajectory>("get_recorded_trajectory");

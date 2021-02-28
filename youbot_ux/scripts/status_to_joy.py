@@ -5,7 +5,6 @@ import copy
 from sensor_msgs.msg import Joy
 from ds4_driver.msg import Status
 
-
 # Built by example from ds4_driver controller_ros node
 
 class StatusConverter():

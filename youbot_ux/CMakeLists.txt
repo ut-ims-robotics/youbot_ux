@@ -126,13 +126,13 @@ include_directories(
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 catkin_install_python(PROGRAMS 
-    src/youbot_drive_joy.py
-    src/status_to_joy.py
-    src/velocity_move_youbot.py
-    src/velocity_move_youbot_grasp.py
-    src/youbot_states.py
-    src/youbot_states_feedback.py
-    src/youbot_trajectory_record.py
+    scripts/youbot_drive_joy.py
+    scripts/status_to_joy.py
+    scripts/youbot_velocity_move.py
+    scripts/youbot_velocity_move_grasp.py
+    scripts/youbot_states.py
+    scripts/youbot_states_feedback.py
+    scripts/youbot_trajectory_record.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 

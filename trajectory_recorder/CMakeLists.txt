@@ -25,7 +25,7 @@ generate_messages(
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES trajectory_recorder
 #  CATKIN_DEPENDS message_generation roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib

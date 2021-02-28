@@ -10,10 +10,9 @@ from trajectory_recorder.srv import *
 
 import time
 
-# todo get services functioning (also in trajectory_replayer)
-# finish trajectory_record_state condition
-# make parameter server for controls (also add reading of such parameters to gamepad inputs in nodes)
-# figure out engine on off service
+# todo get services functioning (also in trajectory_replayer) ...still not working well done you...
+# finish trajectory_record_state condition ...cant test without previous task...
+# figure out engine on off service ...cant test due to gazebo option not having such services...
 # variable names recheck in all nodes
 # ...
 
@@ -21,7 +20,7 @@ class TrajectoryRecordControl:
 	def __init__(self):
 		self.trajectory_record_state_pub = rospy.Publisher('trajectory_record_state', String, queue_size=1)
 		self.state_sub = rospy.Subscriber(rospy.get_param('~sub_topic', "state"), String, self.getState)
-		self.joy_sub = rospy.Subscriber(rospy.get_param('~sub_topic', "joy"), Joy, self.sub_joy_states)
+		self.joy_sub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_trajectory_record/controlsSubTopic', "joy"), Joy, self.sub_joy_states)
 		self.trajectory_record_state = "idle"
 		self.stateMessage = "safemode"
 
@@ -41,12 +40,11 @@ class TrajectoryRecordControl:
 	
 	def getState(self, string):
 		self.stateMessage = string.data
-		#print(self.stateMessage)
 
         def sub_joy_states(self, joy):
-		self.recordControlButtonState = joy.buttons[0]
-		self.playbackControlButtonState = joy.buttons[1]
-		self.motorControlButtonState = joy.buttons[3]
+		self.recordControlButtonState = joy.buttons[rospy.get_param('~/control_options/controls/youbot_trajectory_record/recordControlButton', 0)]
+		self.playbackControlButtonState = joy.buttons[rospy.get_param('~/control_options/controls/youbot_trajectory_record/playbackControlButton', 1)]
+		self.motorControlButtonState = joy.buttons[rospy.get_param('~/control_options/controls/youbot_trajectory_record/motorControlButton', 3)]
 
 	def trajectoryRecordControl(self):
 		self.trajectory_record_state_pub.publish(self.trajectory_record_state)
@@ -65,10 +63,14 @@ class TrajectoryRecordControl:
 				if self.recordControlButtonState:
 					self.trajectory_record_state = "idle"
 					self.trajectoryRecordSrv(1)
+
 				if self.motorControlButtonState:
 					#self.motorsOff()
+					pass
 				else:
 					#self.motorsOn()
+					pass
+					
 
 			elif self.trajectory_record_state == "playback":
 				print("playback")

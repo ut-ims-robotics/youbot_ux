@@ -2,46 +2,23 @@
 
 
 import rospy
-import numpy as np
-#import scipy.linalg
-import math
-import tf
-import tf.transformations as trans
 
-from tf.transformations import euler_from_quaternion
-from tf.transformations import compose_matrix
-from tf.transformations import is_same_transform
 from sensor_msgs.msg import JointState
-from urdf_parser_py.urdf import URDF
 from brics_actuator.msg import JointVelocities
 from brics_actuator.msg import JointPositions
 from brics_actuator.msg import JointValue
 from sensor_msgs.msg import Joy
 from std_msgs.msg import String, Int8
 
-        
-
-jointMax= [5.840139, 2.617989, -0.0157081, 3.42919, 5.641589]
-jointMin= [0.01006921, 0.01006921, -5.0264, 0.0221391, 0.11062]
-
-jointHome= [0.01007,0.01007,-0.15709,0.02214,0.1107]
-jointCamera= [3.0,0.5,-0.9,0.1,3.0]
-jointObject= [3.04171,0.63597,-1.017845,0.36284,2.876194]
-jointGrasp = [3.04171,2.04427,-1.5189129,2.5434289757,2.8761944]
-jointInitialize= [0.01007,.635971,-1.91989,1.04424,2.87619]
-
-jointGuessForGrasp=[0.0, 0.0, 1.52, 1.84, -1.26, 2.4, 3.10]
-
-armJointPosCandle = np.array([2.9496, 1.1344, -2.5482, 1.789, 2.9234])
-
 class YoubotArm:
 	def __init__(self):
 		self.arm_joint_pub = rospy.Publisher("arm_1/arm_controller/velocity_command", JointVelocities, queue_size=0)
 		self.arm_joint_select_pub = rospy.Publisher('joint_select', Int8, queue_size=1)
-		self.state_sub = rospy.Subscriber(rospy.get_param('~sub_topic', "state"), String, self.getState)
-		self.joy_sub = rospy.Subscriber(rospy.get_param('~sub_topic', "joy"), Joy, self.sub_joy_states)
+		self.state_sub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
+		self.joy_sub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_velocity_move/controlsSubTopic', "joy"), Joy, self.sub_joy_states)
 		self.stateMessage = "safemode"
 
+		self.axisSpeedMultiplier = rospy.get_param('~/control_options/controls/youbot_velocity_move/axisSpeedMultiplier', 0.5)
 		self.prevClick = 0
 		self.currentSelected = 1
 		self.prevSelected = 0 
@@ -57,11 +34,11 @@ class YoubotArm:
 		print(self.stateMessage)
 
 	def sub_joy_states(self, joy):
-		self.jointSelectorUp = joy.buttons[15]
-		self.jointSelectorDown = joy.buttons[17]
-		self.jointAxisButtonX1 = -joy.axes[0]
-		self.jointAxisButtonX2 = joy.axes[2]
-		self.jointAxisButtonY = joy.axes[1]
+		self.jointSelectorUp = joy.buttons[rospy.get_param('~/control_options/controls/youbot_velocity_move/buttonSelectorUp', 15)]
+		self.jointSelectorDown = joy.buttons[rospy.get_param('~/control_options/controls/youbot_velocity_move/buttonSelectorDown', 17)]
+		self.jointAxisButtonX1 = -joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonX', 0)]
+		self.jointAxisButtonX2 = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonXRotate', 2)]
+		self.jointAxisButtonY = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonY', 1)]
 		
 
 	def publish_arm_joint_velocities(self):
@@ -89,9 +66,9 @@ class YoubotArm:
 			joint5 = 0.0
 
 			joint_velocities = [joint1, joint2, joint3, joint4, joint5]
-			joint_velocities[self.currentSelected] = 0.5*(self.jointAxisButtonY)
-			joint_velocities[0] = 0.5*(self.jointAxisButtonX1)
-			joint_velocities[4] = 0.5*(self.jointAxisButtonX2)
+			joint_velocities[self.currentSelected] = self.axisSpeedMultiplier*(self.jointAxisButtonY)
+			joint_velocities[0] = self.axisSpeedMultiplier*(self.jointAxisButtonX1)
+			joint_velocities[4] = self.axisSpeedMultiplier*(self.jointAxisButtonX2)
 
 			jointCommands = []
 

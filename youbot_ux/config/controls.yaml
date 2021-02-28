@@ -1,0 +1,36 @@
+#ds4 controls
+#axes: leftX - 0, leftY - 1, rightX - 2, rightY - 3, L2 - 4, R2 - 5
+#buttons: square - 0, triangle - 1, circle - 2, cross - 3, leftJoyButton - 12, rightJoyButton - 13, dPadLeft - 15, dPadRight - 16, dPadUp - 15, dPadDown - 17, L1 - 4, L2 - 5, R1 - 6, R2 - 7, PSButton - 10, options - 8, share - 9, trackpadButton - 11
+
+control_options:
+    controller: ds4
+    controls:
+        youbot_drive:
+            controlsSubTopic: joy
+            xAxes: 1 # in script assigned as axis
+            yAxes: 0
+            zAxes: 2
+            axisSpeedMultiplier: 0.5
+        youbot_velocity_move:
+            controlsSubTopic: joy
+            buttonSelectorUp: 15
+            buttonSelectorDown: 17
+            axesButtonX: 0
+            axesButtonXRotate: 2
+            axesButtonY: 1
+            axisSpeedMultiplier: 0.5
+        youbot_velocity_move_grasp:
+            controlsSubTopic: joy
+            axisGripperClose: 4
+            axisGripperOpen: 5
+            axisSpeedMultiplier: 0.00025
+        youbot_trajectory_record:
+            controlsSubTopic: joy
+            recordControlButton: 0
+            playbackControlButton: 1
+            motorControlButton: 3
+        youbot_states:
+            controlsSubTopic: joy
+            regimeButtonState: 2
+            safeButtonSate: 10
+
