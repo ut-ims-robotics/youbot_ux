@@ -117,11 +117,6 @@ bool TrajectoryRecorder::setRecordingFrequency(float frequency)
   }
 }
 
-void TrajectoryRecorder::smoothenRecordedTrajectory()
-{
-  
-}
-
 bool TrajectoryRecorder::isFrequencyValid(const float& frequency)
 {
   return (frequency > 0);

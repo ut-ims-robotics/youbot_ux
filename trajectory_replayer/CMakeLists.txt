@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   trajectory_msgs
+  trajectory_recorder
 )
 
 add_service_files(
@@ -23,7 +24,7 @@ generate_messages(
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES trajectory_replayer
 #  CATKIN_DEPENDS message_generation roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib
@@ -32,6 +33,12 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
 )
 
 # Action engine node
@@ -48,3 +55,5 @@ add_dependencies(trajectory_replayer_node
 target_link_libraries(trajectory_replayer_node
   ${catkin_LIBRARIES}
 )
+
+

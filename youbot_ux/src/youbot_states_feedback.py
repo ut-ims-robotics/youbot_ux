@@ -111,7 +111,7 @@ class Handler(object):
 				feedback.led_b = 0.0
 			else:
 				pass
-		#print(self.currentTime, self.blinkStartTime)
+
 		self.pub_feedback.publish(feedback)			
 		
 	def main(self):

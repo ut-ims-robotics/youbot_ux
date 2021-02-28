@@ -1,6 +1,7 @@
 #include "trajectory_replayer/trajectory_replayer.h"
 #include "iostream"
 #include "std_srvs/Empty.h"
+#include "trajectory_recorder/trajectory_recorder.h"
 
 #include <brics_actuator/JointPositions.h>
 #include <brics_actuator/JointVelocities.h>
@@ -46,7 +47,28 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 	armPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 100);
 
 	std_srvs::Empty empty;
-	trajectory_msgs::JointTrajectory traj;
+	
+
+	ros::NodeHandle n;
+	ros::ServiceClient client = n.serviceClient<trajectory_recorder::GetRecordedTrajectory>("get_recorded_trajectory");
+	trajectory_recorder::GetRecordedTrajectory getRecordedTrajectorySrv;
+	
+	// get trajectory message from service
+	if (client.call(getRecordedTrajectorySrv))
+	{
+		if (getRecordedTrajectorySrv.response.response_message == "ok") 
+		{
+			trajectory_msgs::JointTrajectory traj = getRecordedTrajectorySrv.response.trajectory;
+		}
+		else
+		{
+			return false;
+		}			
+	}
+	else 
+	{
+		return false;
+	}
 
 	//ros::service::call("get_recorded_trajectory", empty, traj); HOW TO GET TRAJECTORY MESSAGE?
 	brics_actuator::JointPositions command;	
@@ -98,7 +120,7 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 
             command.positions = armJointPositions;
             armPositionsPublisher.publish(command);
-            ros::Duration(0.035).sleep();
+            ros::Duration(0.1).sleep();
         }
         ROS_INFO("sendHackedTrajectory: Finished");
 	res.response_message = "sendHackedTrajectory: Finished";

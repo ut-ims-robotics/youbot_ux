@@ -26,9 +26,10 @@ class TrajectoryRecordControl:
 		self.stateMessage = "safemode"
 
 		self.motorsOff = rospy.ServiceProxy('arm_1/switchOffMotors', Empty)
-		self.motorsOn = rospy.ServiceProxy('arm_1/switchOnMotors', Empty) # how to get empty messages in rospy GLHF
+		self.motorsOn = rospy.ServiceProxy('arm_1/switchOnMotors', Empty) 
 		
-		self.trajectoryRecordControl = rospy.ServiceProxy('control_trajectory_recorder', TrajectoryRecorderControl)
+		self.trajectoryRecordSrv = rospy.ServiceProxy('control_trajectory_recorder', TrajectoryRecorderControl)
+		self.trajectoryReplaySrv = rospy.ServiceProxy('trajectory_playback', SendHackedTrajectory)
 		#self.trajectoryRecordGetRecorded = rospy.ServiceProxy('arm_1/switchOnMotors', "{}")
 		
 		self.recordControlButtonState = 0
@@ -47,37 +48,43 @@ class TrajectoryRecordControl:
 		self.playbackControlButtonState = joy.buttons[1]
 		self.motorControlButtonState = joy.buttons[3]
 
-	def trajectoryRecordControl(self, joy):
+	def trajectoryRecordControl(self):
+		self.trajectory_record_state_pub.publish(self.trajectory_record_state)
+		rospy.loginfo(self.trajectory_record_state)
+		rospy.loginfo(self.stateMessage)
 		if self.stateMessage == "trajectoryRecord":
 
 			if self.trajectory_record_state == "idle":
-				if jself.recordControlButtonState:
+				if self.recordControlButtonState:
 					self.trajectory_record_state = "record"
-					self.trajectory_record_state_pub("record")
-					self.trajectoryRecordControl("recorder_action: 0")
+					self.trajectoryRecordSrv(0)
 				elif self.playbackControlButtonState:
 					self.trajectory_record_state = "playback"
-					self.trajectory_record_state_pub("playback")
 
 			elif self.trajectory_record_state == "record":
 				if self.recordControlButtonState:
 					self.trajectory_record_state = "idle"
-					self.trajectory_record_state_pub("idle")
-					self.trajectoryRecordControl("recorder_action: 1")
+					self.trajectoryRecordSrv(1)
 				if self.motorControlButtonState:
-					self.motorsOff()
+					#self.motorsOff()
 				else:
-					self.motorsOn()
+					#self.motorsOn()
 
 			elif self.trajectory_record_state == "playback":
 				print("playback")
+				resp = self.trajectoryReplaySrv()
+				while resp != "sendHackedTrajectory: Finished":
+					sleep(1)
 				self.trajectory_record_state = "idle"
 
 	def main(self):
 		rate = rospy.Rate(10)
 		rospy.wait_for_service('control_trajectory_recorder')
+		rospy.loginfo("control_trajectory_recorder found")
 		rospy.wait_for_service('get_recorded_trajectory')
+		rospy.loginfo("get_recorded_trajectory found")
 		rospy.wait_for_service('trajectory_playback')
+		rospy.loginfo("trajectory_playback found")
 		while not rospy.is_shutdown():
 			self.trajectoryRecordControl()
 			rate.sleep()
