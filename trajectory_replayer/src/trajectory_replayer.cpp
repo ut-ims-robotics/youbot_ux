@@ -13,6 +13,8 @@
 #include <boost/units/systems/si/length.hpp>
 #include <boost/units/systems/si/plane_angle.hpp>
 
+#include <ros/console.h>
+
 ros::Publisher armPositionsPublisher;
 
 
@@ -35,30 +37,33 @@ TrajectoryReplayer::TrajectoryReplayer(const std::string& joint_states_topic, fl
   ROS_INFO_STREAM("The trajectory replayer is initialized");
 }
 
-
+using namespace std;
 //void sendHackedTrajectory(const trajectory_msgs::JointTrajectory traj, bool joint1changed, double joint1value)
 bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& req
 , SendHackedTrajectory::Response& res)
 {
 	// recorded_trajectory_ may be the values and all for use
-	int numberOfJoints = 5;
+	int numberOfJoints = 7;
 	bool joint1changed = false;
 	double joint1value = 0.0;
 	armPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 100);
 
 	std_srvs::Empty empty;
-	trajectory_msgs::JointTrajectory traj;
+	//trajectory_msgs::JointTrajectory traj;
 
 	ros::NodeHandle n;
 	ros::ServiceClient client = n.serviceClient<trajectory_recorder::GetRecordedTrajectory>("get_recorded_trajectory");
 	trajectory_recorder::GetRecordedTrajectory getRecordedTrajectorySrv;
 	
+	trajectory_msgs::JointTrajectory traj = trajectory_msgs::JointTrajectory();
 	// get trajectory message from service
 	if (client.call(getRecordedTrajectorySrv))
 	{
+		
 		if (getRecordedTrajectorySrv.response.response_message == "ok") 
 		{
-			trajectory_msgs::JointTrajectory traj = getRecordedTrajectorySrv.response.trajectory;
+			traj.joint_names = getRecordedTrajectorySrv.response.trajectory.joint_names; // load joint anmes and points to local variable
+			traj.points = getRecordedTrajectorySrv.response.trajectory.points;
 		}
 		else
 		{
@@ -70,7 +75,10 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 		return false;
 	}
 
-	//ros::service::call("get_recorded_trajectory", empty, traj); HOW TO GET TRAJECTORY MESSAGE?
+	if (traj.joint_names.size() < 5) {
+		return false;
+	}
+
 	brics_actuator::JointPositions command;	
         std::vector <brics_actuator::JointValue> armJointPositions;
         armJointPositions.resize(numberOfJoints);

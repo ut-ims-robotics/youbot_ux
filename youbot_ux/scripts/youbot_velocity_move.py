@@ -26,6 +26,9 @@ class YoubotArm:
 		self.jointSelectorDown = 0
 		self.jointMoverPosition = 0.0	
 
+		
+		self.rate = rospy.Rate(10)
+
 		# Give the publishers time to get setup before trying to do any actual work.
         	rospy.sleep(2)
 
@@ -115,13 +118,13 @@ class YoubotArm:
 			desiredVelocities.velocities = jointCommands
 			self.arm_joint_pub.publish(desiredVelocities)
 			self.prevSelected = 0 # so when state reselected, user gets notification of current selected join immediately
-			
+			while self.stateMessage != "manipulatorPerJoint":
+				self.rate.sleep()
 			
 	def main(self):
 		while not rospy.is_shutdown():
-			rate = rospy.Rate(10)
 			self.publish_arm_joint_velocities()
-			rate.sleep()
+			self.rate.sleep()
 
 
 #if __name__ == '__main__':

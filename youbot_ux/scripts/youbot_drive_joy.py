@@ -17,6 +17,7 @@ class YoubotDrive:
 		
 		self.axisSpeedMultiplier = rospy.get_param('~/control_options/controls/youbot_drive/axisSpeedMultiplier', 0.5)
 		# Give the publishers time to get setup before trying to do any actual work.
+		rospy.on_shutdown(self.publish_cmd_velocities_stop)
         	rospy.sleep(2)
 	
 	def getState(self, string):

@@ -9,11 +9,14 @@ from ds4_driver.msg import Feedback, Status
 class Handler(object):
 	def __init__(self, feedback_topic='set_feedback'):
 		
+		# set up publishers/subscribers
 		self.pub_feedback = rospy.Publisher(feedback_topic, Feedback, queue_size=1)
 		self.state_sub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
 		self.arm_joint_select_sub = rospy.Subscriber(rospy.get_param('~joint_select_sub_topic', "joint_select"), Int8, self.getJointSelect)
 		self.trajectory_record_state_sub = rospy.Subscriber(rospy.get_param('~trajectory_record_state_topic', "trajectory_record_state"), String, self.getTrajectoryRecordState)
 		self.status_sub = rospy.Subscriber('status', Status, self.getStatusMsg, queue_size=1)
+
+		# set up initial values
 		self.stateMessage = None
 		self.statusMessage = None
 		self.trajectoryRecordState = None
@@ -30,7 +33,7 @@ class Handler(object):
 		self.statusMessage = status
 
 	def getTrajectoryRecordState(self, state):
-		self.trajectoryRecordState = state
+		self.trajectoryRecordState = state.data
 
 	def getJointSelect(self, int8): # for joint selector feedback (as rumble)
 		self.selectedJoint = int8.data
@@ -47,6 +50,9 @@ class Handler(object):
 		self.stateMessage = string.data
 
 	def publishFeedback(self):
+
+		rospy.loginfo(self.stateMessage)
+		rospy.loginfo(self.trajectoryRecordState)
 		feedback = Feedback()
 		if self.stateMessage == "driving":
 			feedback.set_led = True
@@ -73,22 +79,20 @@ class Handler(object):
 				feedback.led_b = 1.0
 			elif self.trajectoryRecordState == "playback":
 				feedback.set_led = True
+				feedback.led_r = 0.5
+				feedback.led_g = 0.0
+				feedback.led_b = 0.6
+			else:
+				feedback.set_led = True
 				feedback.led_r = 0.0
-				feedback.led_g = 1.0
-				feedback.led_b = 0.8
+				feedback.led_g = 0.0
+				feedback.led_b = 0.0
 			
 		elif self.stateMessage == "safeMode":
 			feedback.set_led = True
 			feedback.led_r = 0.0
 			feedback.led_g = 0.0
 			feedback.led_b = 1.0
-		
-		#if self.selectedJoint == 1:
-		#	feedback.rumble_duration = 0.2
-		#if self.selectedJoint == 2:
-		#	feedback.rumble_duration = 0.5
-		#if self.selectedJoint == 3:
-		#	feedback.rumble_duration = 0.8
 
 		self.currentTime = rospy.get_time()
 		if float(self.currentTime) - float(self.rumbleStartTime) < self.rumbleDuration:

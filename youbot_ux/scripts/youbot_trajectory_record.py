@@ -29,11 +29,12 @@ class TrajectoryRecordControl:
 		
 		self.trajectoryRecordSrv = rospy.ServiceProxy('control_trajectory_recorder', TrajectoryRecorderControl)
 		self.trajectoryReplaySrv = rospy.ServiceProxy('trajectory_playback', SendHackedTrajectory)
-		#self.trajectoryRecordGetRecorded = rospy.ServiceProxy('arm_1/switchOnMotors', "{}")
 		
 		self.recordControlButtonState = 0
 		self.playbackControlButtonState = 0
 		self.motorControlButtonState = 0
+
+		self.rate = rospy.Rate(20)
 
 		# Give the publishers time to get setup before trying to do any actual work.
         	rospy.sleep(2)
@@ -56,27 +57,30 @@ class TrajectoryRecordControl:
 				if self.recordControlButtonState:
 					self.trajectory_record_state = "record"
 					self.trajectoryRecordSrv(0)
+					while self.recordControlButtonState:
+						self.rate.sleep()
 				elif self.playbackControlButtonState:
 					self.trajectory_record_state = "playback"
+					while self.playbackControlButtonState:
+						self.rate.sleep()
 
 			elif self.trajectory_record_state == "record":
 				if self.recordControlButtonState:
 					self.trajectory_record_state = "idle"
 					self.trajectoryRecordSrv(1)
+					while self.recordControlButtonState:
+						self.rate.sleep()
 
 				if self.motorControlButtonState:
 					#self.motorsOff()
-					pass
+					self.rate.sleep()
 				else:
 					#self.motorsOn()
-					pass
+					self.rate.sleep()
 					
 
 			elif self.trajectory_record_state == "playback":
-				print("playback")
-				resp = self.trajectoryReplaySrv()
-				while resp != "sendHackedTrajectory: Finished":
-					sleep(1)
+				self.trajectoryReplaySrv()
 				self.trajectory_record_state = "idle"
 
 	def main(self):
