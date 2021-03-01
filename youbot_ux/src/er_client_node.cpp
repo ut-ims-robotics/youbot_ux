@@ -7,9 +7,11 @@
 std::string currentState = "safeMode";
 std::string lastState = "safeMode";
 
-void stateCallback(const std_msgs::StringConstPtr& str) 
+using namespace std;
+void stateCallback(const std_msgs::String::ConstPtr& str) 
 {
-  currentState = str -> data.c_str();
+  cout << str;
+  currentState = str -> data;
 
 }
 
@@ -29,26 +31,28 @@ int main(int argc, char** argv)
   ros::Subscriber stateSub = nh.subscribe("state", 1, stateCallback);
 
   // load all required nodes into variables for later use
-  temoto_er_manager::LoadExtResource load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py");
-  temoto_er_manager::LoadExtResource load_resource_msg_velocity = ermi.loadRosResource("youbot_ux", "youbot_velocity_move.py");
-  temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp = ermi.loadRosResource("youbot_ux", "youbot_velocity_move_grasp.py");
-  temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record.py");
+  temoto_er_manager::LoadExtResource load_resource_msg_drive;
+  temoto_er_manager::LoadExtResource load_resource_msg_velocity;
+  temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp;
+  temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record;
+
   while(ros::ok())
   {
+    //cout << currentState;
     if (currentState != lastState) {
-      if (currentState == "Driving") {
+      if (currentState == "driving") {
         temoto_er_manager::LoadExtResource load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py");
         ermi.unloadResource(load_resource_msg_velocity);
         ermi.unloadResource(load_resource_msg_velocity_grasp);
         ermi.unloadResource(load_resource_msg_trajectory_record);
       }
-      else if (currentState == "ManipulatorPerJoint") {
+      else if (currentState == "manipulatorPerJoint") {
         temoto_er_manager::LoadExtResource load_resource_msg_velocity = ermi.loadRosResource("youbot_ux", "youbot_velocity_move.py");
         temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp = ermi.loadRosResource("youbot_ux", "youbot_velocity_move_grasp.py");
         ermi.unloadResource(load_resource_msg_drive);
         ermi.unloadResource(load_resource_msg_trajectory_record);
       }
-      else if (currentState == "TrajectoryRecord") {
+      else if (currentState == "trajectoryRecord") {
         temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record.py");
         ermi.unloadResource(load_resource_msg_drive);
         ermi.unloadResource(load_resource_msg_velocity);
