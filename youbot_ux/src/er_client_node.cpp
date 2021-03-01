@@ -33,7 +33,8 @@ int main(int argc, char** argv)
   temoto_er_manager::LoadExtResource load_resource_msg_velocity = ermi.loadRosResource("youbot_ux", "youbot_velocity_move.py");
   temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp = ermi.loadRosResource("youbot_ux", "youbot_velocity_move_grasp.py");
   temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record.py");
-
+  while(ros::ok())
+  {
     if (currentState != lastState) {
       if (currentState == "Driving") {
         temoto_er_manager::LoadExtResource load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py");
@@ -55,6 +56,7 @@ int main(int argc, char** argv)
       }
       lastState = currentState;
     }
+  }
   
   return 0;
 }
