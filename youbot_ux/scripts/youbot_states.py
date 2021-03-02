@@ -156,6 +156,10 @@ def main():
     # Open the container
     with sm:
         # Add states to the container
+	
+        smach.StateMachine.add('SafeMode', SafeMode(), 
+                               transitions={'toDriving':'Driving',
+					    'toSafeMode':'SafeMode'})
         smach.StateMachine.add('Driving', Driving(), 
                                transitions={'toManipulatorPerJoint':'ManipulatorPerJoint', #1 next regime
 					    'toDriving':'Driving',			   #2 current class regime
@@ -167,9 +171,6 @@ def main():
         smach.StateMachine.add('TrajectoryRecord', TrajectoryRecord(), 
                                transitions={'toDriving':'Driving',
 					    'toTrajectoryRecord': 'TrajectoryRecord',
-					    'toSafeMode':'SafeMode'})
-        smach.StateMachine.add('SafeMode', SafeMode(), 
-                               transitions={'toDriving':'Driving',
 					    'toSafeMode':'SafeMode'})
 
 	
