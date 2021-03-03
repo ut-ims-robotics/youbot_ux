@@ -10,20 +10,20 @@ class Handler(object):
 	def __init__(self, feedback_topic='set_feedback'):
 		
 		# set up publishers/subscribers
-		self.pub_feedback = rospy.Publisher(feedback_topic, Feedback, queue_size=1)
-		self.state_sub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
-		self.arm_joint_select_sub = rospy.Subscriber(rospy.get_param('~joint_select_sub_topic', "joint_select"), Int8, self.getJointSelect)
-		self.trajectory_record_state_sub = rospy.Subscriber(rospy.get_param('~trajectory_record_state_topic', "trajectory_record_state"), String, self.getTrajectoryRecordState)
+		self.pubFeedback = rospy.Publisher(feedback_topic, Feedback, queue_size=1) # Feedback to ds4 driver
+		self.stateSub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
+		self.armJointSelectSub = rospy.Subscriber(rospy.get_param('~joint_select_sub_topic', "joint_select"), Int8, self.getJointSelect)
+		self.trajectoryRecordStateSub = rospy.Subscriber(rospy.get_param('~trajectory_record_state_topic', "trajectory_record_state"), String, self.getTrajectoryRecordState)
 		self.status_sub = rospy.Subscriber('status', Status, self.getStatusMsg, queue_size=1)
 
 		# set up initial values
 		self.stateMessage = None
 		self.statusMessage = None
 		self.trajectoryRecordState = None
-		self.ledFlash = False
-		self.selectedJoint = 1
-		self.rumbleDuration = 0.0
-		self.blinkDuration = 0.5
+		self.ledFlash = False # to set if led flashing is to be used
+		self.selectedJoint = 1 # init of per joint control join selection feedback
+		self.rumbleDuration = 0.0 # init of rumble duration feedback
+		self.blinkDuration = 0.5 
 		self.warningBatteryLevel = 0.1 # battery level when to warn user (10%)
 		self.currentTime = rospy.get_time()
 		self.rumbleStartTime = rospy.get_time()
@@ -50,11 +50,10 @@ class Handler(object):
 		self.stateMessage = string.data
 
 	def publishFeedback(self):
-
 		rospy.loginfo(self.stateMessage)
 		rospy.loginfo(self.trajectoryRecordState)
 		feedback = Feedback()
-		if self.stateMessage == "driving":
+		if self.stateMessage == "driving": # setting of new led colors according to regimes
 			feedback.set_led = True
 			feedback.led_r = 0.0
 			feedback.led_g = 1.0
@@ -93,12 +92,17 @@ class Handler(object):
 			feedback.led_r = 0.0
 			feedback.led_g = 0.0
 			feedback.led_b = 1.0
+		else:
+			feedback.set_led = True
+			feedback.led_r = 0.0
+			feedback.led_g = 0.0
+			feedback.led_b = 0.0
 
+		# Block for device vibration 
 		self.currentTime = rospy.get_time()
 		if float(self.currentTime) - float(self.rumbleStartTime) < self.rumbleDuration:
 			feedback.set_rumble = True
 			feedback.rumble_small = 1.0
-		#print(self.currentTime, self.rumbleStartTime)
 		
 		# Notification to user about low controller battery state (led blink according to self.blinkDuration value)
 		if self.statusMessage != None and self.statusMessage.battery_percentage <= self.warningBatteryLevel:
@@ -116,7 +120,7 @@ class Handler(object):
 			else:
 				pass
 
-		self.pub_feedback.publish(feedback)			
+		self.pubFeedback.publish(feedback)			
 		
 	def main(self):
 		rate = rospy.Rate(10)

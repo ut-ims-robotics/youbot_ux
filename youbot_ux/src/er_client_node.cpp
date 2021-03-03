@@ -13,7 +13,6 @@ void stateCallback(const std_msgs::String::ConstPtr& str)
   //cout << "SUBSCRIBE";
   //cout << str->data;
   currentState = str -> data;
-
 }
 
 int main(int argc, char** argv)
@@ -41,15 +40,15 @@ int main(int argc, char** argv)
     r.sleep();
   }
   //ROS_INFO("ROS ok");
-  // load all required nodes into variables for later use
+  // create variables for all loadable/unloadable resources
   temoto_er_manager::LoadExtResource load_resource_msg_drive;
   temoto_er_manager::LoadExtResource load_resource_msg_velocity;
   temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp;
   temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record;
   
+  // block for loading and unloading of nodes
   while(ros::ok())
   {
-    
     //cout << "got to the start";
     //cout << currentState;
     if (currentState != lastState) {
@@ -74,8 +73,14 @@ int main(int argc, char** argv)
         ermi.unloadResource(load_resource_msg_velocity);
         ermi.unloadResource(load_resource_msg_velocity_grasp);
       }
+      else if (currentState == "safeMode") {
+	//cout << "SAFEMODE";
+        ermi.unloadResource(load_resource_msg_drive);
+        ermi.unloadResource(load_resource_msg_velocity);
+        ermi.unloadResource(load_resource_msg_velocity_grasp);
+        ermi.unloadResource(load_resource_msg_trajectory_record);
+      }
       lastState = currentState;
-      
       
       //cout << "got to the end";
     }

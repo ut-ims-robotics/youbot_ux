@@ -9,58 +9,60 @@ from brics_actuator.msg import JointPositions
 from brics_actuator.msg import JointValue
 from sensor_msgs.msg import Joy
 from std_msgs.msg import String
-        
-gripperWidthOpen = 0.0099
 
 class YoubotArm:
 
 	def __init__(self):
-		self.gripper_pub = rospy.Publisher("arm_1/gripper_controller/position_command", JointPositions, queue_size=0)
-		self.state_sub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
-		self.joy_sub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/controlsSubTopic', "joy"), Joy, self.getJoy)		
+		self.gripperPub = rospy.Publisher("arm_1/gripper_controller/position_command", JointPositions, queue_size=0)
+		self.stateSub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
+		self.joySub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/controlsSubTopic', "joy"), Joy, self.getJoy)		
 
 		self.stateMessage = "safemode"
 		self.prevClick = 0
 		self.currentSelected = 0
+		
+		self.gripperWidthOpen = 0.0099 # value set to check if gripper is open
+		self.gripperCurrent = 0.0 # init of value for current gripper state (usual after default calibration)
+		#self.amountOfChange = 0.0 # init of value for amount of change according to user input
 
-		self.gripperCurrent = 0.0
-		self.amountOfChange = 0.0
-
+		# init of gripper change multiplier and controls 
+		self.axisSpeedMultiplier = rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisSpeedMultiplier', 0.00025)
+		self.axisGripperClose = 0
+		self.axisGripperOpen = 0
+		
 		self.rate = rospy.Rate(10)
 
-		# Give the publishers time to get setup before trying to do any actual work.
-		rospy.sleep(2)
 
 	def getState(self, string):
 		self.stateMessage = string.data
-		print(self.stateMessage)
+		#print(self.stateMessage)
 	
+	# function for getting and saving controller values
 	def getJoy(self, joy):
-		axisGripperClose = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperClose', 4)]
-		axisGripperOpen = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperOpen', 5)]
-		axisSpeedMultiplier = rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisSpeedMultiplier', 0.00025)
-		self.amountOfChange = axisSpeedMultiplier*(-1*axisGripperClose+axisGripperOpen)
+		self.axisGripperClose = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperClose', 4)]
+		self.axisGripperOpen = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperOpen', 5)]
 
-	def publish_gripper_joint_positions(self):
+	def publishGripperJointPositions(self):
 		if self.stateMessage == "manipulatorPerJoint":
 
-			self.gripperCurrent += self.amountOfChange
+			self.gripperCurrent += self.axisSpeedMultiplier*(-1*self.axisGripperClose+self.axisGripperOpen)
 
-			if self.gripperCurrent > gripperWidthOpen:
-				self.gripperCurrent = gripperWidthOpen
+			# check for gripper limit values
+			if self.gripperCurrent > self.gripperWidthOpen:
+				self.gripperCurrent = self.gripperWidthOpen
 			if self.gripperCurrent < 0.0:
 				self.gripperCurrent = 0.0
 
-			desiredPositions = JointPositions()
+			desiredPositions = JointPositions() # start of setting new positions for gripper
 			jointCommands = []
 
-			joint = JointValue()
+			joint = JointValue() # left gripper
 			joint.joint_uri = "gripper_finger_joint_l"
 			joint.unit = "m"
 			joint.value = self.gripperCurrent
 			jointCommands.append(joint)
 
-			joint = JointValue()
+			joint = JointValue() # right gripper
 			joint.joint_uri = "gripper_finger_joint_r"
 			joint.unit = "m"
 			joint.value = self.gripperCurrent
@@ -68,17 +70,17 @@ class YoubotArm:
 
 			desiredPositions.positions = jointCommands
 
-			self.gripper_pub.publish(desiredPositions)
+			self.gripperPub.publish(desiredPositions)	
 
 	def main(self):
 		while not rospy.is_shutdown():
 			rate = rospy.Rate(10)
-			self.publish_gripper_joint_positions()
+			self.publishGripperJointPositions()
 			self.rate.sleep()
 
 
 #if __name__ == '__main__':
-rospy.init_node('velocity_move_youbot_gripper', anonymous=True)
+rospy.init_node('youbot_velocity_move_grasp', anonymous=True)
 velocityControl = YoubotArm()
 velocityControl.main()
 

@@ -14,6 +14,8 @@ class StatusConverter():
 		self._prev_joy = None
 		self._autorepeat_rate = 10
 
+		self.rate = rospy.Rate(100)
+
 		period = 1.0 / self._autorepeat_rate
 		rospy.Timer(rospy.Duration(period), self.prev_joy_republish)
 
@@ -53,6 +55,7 @@ class StatusConverter():
                 	self.pub_joy.publish(msg)
 		
 		self._prev_joy = msg
+		self.rate.sleep()
 
 	def prev_joy_republish(self, time):
 		if self._prev_joy is not None: 

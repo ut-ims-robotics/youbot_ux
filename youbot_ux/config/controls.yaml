@@ -33,4 +33,6 @@ control_options:
             controlsSubTopic: joy
             regimeButtonState: 2
             safeButtonSate: 10
+            quit1ButtonState: 8
+            quit2ButtonState: 9
 

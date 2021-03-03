@@ -67,16 +67,18 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 		}
 		else
 		{
-			return false;
+			res.response_message = "error getting trajectory";
+			return true;
 		}			
 	}
 	else 
 	{
-		return false;
+		res.response_message = "no service";
+		return true;
 	}
-
 	if (traj.joint_names.size() < 5) {
-		return false;
+		res.response_message = "no trajectory";
+		return true;
 	}
 
 	brics_actuator::JointPositions command;	
