@@ -10,7 +10,7 @@ control_options:
             xAxes: 1 # in script assigned as axis
             yAxes: 0
             zAxes: 2
-            axisSpeedMultiplier: 0.5
+            axisSpeedMultiplier: 0.3
         youbot_velocity_move:
             controlsSubTopic: joy
             buttonSelectorUp: 15

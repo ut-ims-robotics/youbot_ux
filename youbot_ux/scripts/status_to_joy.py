@@ -62,11 +62,12 @@ class StatusConverter():
 			self.pub_joy.publish(self._prev_joy)
         
 # main
-def main():
+def main(controller):
 	rospy.init_node('status_to_joy', anonymous=True)
- 	StatusConverter()
+	if (controller == "ds4"):
+ 		StatusConverter()
 	rospy.spin()
 
 if __name__ == '__main__':
-    
-    main()
+    controller = rospy.get_param('~/control_options/controller', "ds4")
+    main(controller)
