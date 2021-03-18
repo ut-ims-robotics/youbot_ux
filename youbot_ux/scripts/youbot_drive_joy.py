@@ -11,7 +11,7 @@ import time
 class YoubotDrive:
 	def __init__(self):
 		self.cmdVelPub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
-		self.stateSub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
+		self.stateSub = rospy.Subscriber("state", String, self.getState)
 		self.joySub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_drive/controlsSubTopic', "joy"), Joy, self.subJoyStates)
 		self.stateMessage = "safemode"
 		
@@ -20,7 +20,7 @@ class YoubotDrive:
 		self.yAxis = 0.0
 		self.zAxis = 0.0
 
-		self.rate = rospy.Rate(10)
+		self.rate = rospy.Rate(20)
 		rospy.on_shutdown(self.publishCmdVelocitiesStop)
 	
 	def getState(self, string):
@@ -32,8 +32,10 @@ class YoubotDrive:
 		self.yAxis = joy.axes[rospy.get_param('~/control_options/controls/youbot_drive/yAxes', 0)]
 		self.zAxis = joy.axes[rospy.get_param('~/control_options/controls/youbot_drive/zAxes', 2)]
 
+
 	def publishCmdVelocities(self):
 		if self.stateMessage == "driving":
+			print("here")
 			velCmd = Twist()
 			velCmd.linear.x = self.xAxis*self.axisSpeedMultiplier
 			velCmd.linear.y = self.yAxis*self.axisSpeedMultiplier
@@ -41,6 +43,7 @@ class YoubotDrive:
 			velCmd.angular.x = 0
 			velCmd.angular.y = 0
 			velCmd.angular.z = self.zAxis*self.axisSpeedMultiplier
+			print(self.xAxis)
 			self.cmdVelPub.publish(velCmd)
 		
 	def publishCmdVelocitiesStop(self):
@@ -55,7 +58,7 @@ class YoubotDrive:
 
 	def main(self):
 		while not rospy.is_shutdown():
-			self.publishCmdVelocitiesStop()
+			self.publishCmdVelocities()
 			self.rate.sleep()
 		
 

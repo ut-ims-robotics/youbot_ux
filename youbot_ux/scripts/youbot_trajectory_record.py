@@ -3,7 +3,7 @@
 
 import rospy
 from sensor_msgs.msg import Joy
-from std_msgs.msg import String, Empty
+from std_msgs.msg import String
 from std_srvs.srv import Empty
 from trajectory_replayer.srv import *
 from trajectory_recorder.srv import *
@@ -69,11 +69,11 @@ class TrajectoryRecordControl:
 						self.rate.sleep()
 
 				if self.motorControlButtonState and self.motorCurrentState == 1: # to turn on/off motor resistance
-					#self.motorsOff()
+					self.motorsOff()
 					self.motorCurrentState = 0 
 					self.rate.sleep()
-				elif self.motorCurrentState == 0:
-					#self.motorsOn()
+				elif self.motorControlButtonState == 0 and self.motorCurrentState == 0:
+					self.motorsOn()
 					self.motorCurrentState = 1
 					self.rate.sleep()
 					
