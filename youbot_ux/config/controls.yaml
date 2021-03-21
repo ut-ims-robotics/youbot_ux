@@ -29,6 +29,11 @@ control_options:
             recordControlButton: 0
             playbackControlButton: 1
             motorControlButton: 3
+        youbot_record_grasp_control:
+            controlsSubTopic: joy
+            axisGripperClose: 4
+            axisGripperOpen: 5
+            axisSpeedMultiplier: 0.00025
         youbot_states:
             controlsSubTopic: joy
             regimeButtonState: 2

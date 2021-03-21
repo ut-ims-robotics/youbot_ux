@@ -24,7 +24,10 @@ class YoubotArm:
 		self.prevSelected = 0 
 		self.jointSelectorUp = 0
 		self.jointSelectorDown = 0
-		self.jointMoverPosition = 0.0	
+
+		self.jointAxisButtonX1 = 0.0
+		self.jointAxisButtonX2 = 0.0
+		self.jointAxisButtonY = 0.0	
 
 		self.rate = rospy.Rate(10)
 
