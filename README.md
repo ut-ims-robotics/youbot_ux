@@ -1,8 +1,8 @@
 ## Setting up the on-board computer
 
-Install desktop image of Ubuntu 18.04.5 from [here](https://releases.ubuntu.com/18.04/).
+Download the desktop image of Ubuntu 18.04.5 from [here](https://releases.ubuntu.com/18.04/).
 
-Youbot on Ubuntu 18.04.5 with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
+Install Ubuntu 18.04.5 onto youBots on-board with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
 
 Install ROS with instructions from [here](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
