@@ -6,10 +6,12 @@ Youbot on Ubuntu 18.04.5 with this [tutorial](https://ubuntu.com/tutorials/insta
 
 Install ROS with instructions from [here](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
-First, do "sudo apt install curl"
+First, run the following:
+```bash
+sudo apt install curl
+```
 
-Get packages:
-
+Get required packages:
 ```bash
 sudo apt-get install ros-melodic-pr2-msgs ros-melodic-brics-actuator ros-melodic-moveit git ros-melodic-ros-control ros-melodic-ros-controllers ros-melodic-gazebo-ros-control ros-melodic-joy ros-melodic-joystick-drivers ros-melodic-moveit-visual-tools python-rospkg
 ```
@@ -106,7 +108,7 @@ roslaunch youbot_ux launcher.launch
 
 ## Launch on system startup with service
 
-Make a file at "/etc/systemd/system/" called "youbot_boot.service" (you may need sudo privileges) and put the following part in the box into it. Make sure to replace the "<your username here>" parts with the actual username.
+Make a file at "/etc/systemd/system/" called "youbot_boot.service" (you may need sudo privileges) and put the following part in the box into it. Make sure to replace the &lt;your username here&gt; parts with the actual username.
 ```bash
 [Unit]
 Description=Start Youbot ROS bringup nodes
