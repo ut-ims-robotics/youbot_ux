@@ -2,7 +2,7 @@
 
 Download the desktop image of Ubuntu 18.04.5 from [here](https://releases.ubuntu.com/18.04/).
 
-Install Ubuntu 18.04.5 onto youBots on-board with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
+Install Ubuntu 18.04.5 onto youBots on-board computer with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
 
 Install ROS with instructions from [here](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
@@ -133,14 +133,16 @@ You can start the service with "systemctl start youbot_boot" and enable the serv
 For future development, "sudo su" and then "systemctl disable youbot_boot" so it would no longer be launched on system boot
 
 ## Using the robot
-### Startup 
-Before starting up the on-board computer, turn on the youBots motors, including the manipulator's motors.
+### Startup
+Unless the robot is intended to be moving, powering of the robot should be done from the 24V external power supply, which connects to the top side of the youBots base. Otherwise, the battery of the device should be connected to the side of the robot's base. The battery should never be connected if the robot's is not intended to be used. The battery is charged if both the battery and the external power supply are connected to the robot.
+
+Before starting up the on-board computer, turn on the youBots motors, including the manipulator's motors. Otherwise, if youbot driver is started up on OS boot with previously set up service, the youbot's driver won't detect the robot's base's and manipulator's motors. **Turning off the motors of the manipulators will cause the manipulator to collapse**
 
 After running the youbot_ux launcher.launch file or after it has automatically been started by a service, turn on your DualShock 4 controller. You can do so by pressing the PS button (button in the middle of 2 analog sticks), after which a blue LED light should start blinking. When it is connected and everything works correctly, the LED should be solid blue.
 
 ### Using the robot
 
-When initially starting, the robot will be in "safe mode" with blue light being indicated on the controller. Next, button uses and indicators will be shown in different modes.
+When initially starting the youbot_ux package with the launcher, the robot will be in "safe mode" with blue light being indicated on the controller. Next, button uses and indicators will be shown in different modes.
 
 #### Safe mode
 Safe mode LED indication: Blue  
@@ -155,5 +157,19 @@ Joint selection vibration indication: joint 2 = 0.1s, joint 3 = 0.3s, joint 4 = 
 #### Teach mode
 Teach mode Idle LED indication: Light Blue  
 Teach mode Recording LED indication: Red  
-Teach mode Playback LED indication: Purple  
+Teach mode Playback LED indication: Purple
+**Caution: turning off manipulator's motors will cause the manipulator to collapse**
 ![Teach Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Teach.PNG)
+
+## Shutting down
+
+If controller is to be used, shutting down of ROS nodes is by pressing the "share" and "options" key on the controller while in "safe mode" regime of the robot. After doing so, the LED light on the controller should become very dimly lit blue, indicating that most nodes, except for /rosout, should be turned off. 
+
+Even though nodes can be turned off with a controller, the on-board computer can't. That can be done via SSH by connecting to it from another computer that is on the same network as the robot is connected to with the command "ssh bench5atimsr@<youbotIP>". After connecting to the robot's on-board computer, it can be shut down with the command "sudo shutdown -h now".
+  
+After turning off the computer, the power to the robot can be turned off via the system menu on top of the robot's base by selecting "system off".
+
+## Manipulator moving to wrong location during calibration
+
+Turn the system off completely (PC off, motors off), remove the battery, external power, put the manipulator into its correct calibrated position.
+Without power, press the button used to turn systems on as a precaution. After that, turn everything back on as per usual.
