@@ -41,8 +41,6 @@ class Handler(object):
 			self.rumbleDuration = 0.1
 		if int8.data == 2:
 			self.rumbleDuration = 0.3
-		if int8.data == 3:
-			self.rumbleDuration = 0.5
 		self.rumbleStartTime = rospy.get_time()
 		print(self.selectedJoint)
 

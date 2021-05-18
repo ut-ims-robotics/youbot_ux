@@ -23,7 +23,7 @@ ros::Publisher armGripperPositionsPublisher;
 namespace trajectory_replayer
 {
 
-TrajectoryReplayer::TrajectoryReplayer(const std::string& joint_states_topic, float frequency, bool enable_services)
+TrajectoryReplayer::TrajectoryReplayer(const std::string& joint_states_topic, bool enable_services)
 
 {
 
@@ -33,7 +33,7 @@ TrajectoryReplayer::TrajectoryReplayer(const std::string& joint_states_topic, fl
   if (enable_services)
   {
     trajectory_playback_server_ = nh_.advertiseService("trajectory_playback"
-    , &TrajectoryReplayer::sendHackedTrajectoryCb
+    , &TrajectoryReplayer::sendTrajectoryCb
     , this);
   } 
   ROS_INFO_STREAM("The trajectory replayer is initialized");
@@ -41,15 +41,15 @@ TrajectoryReplayer::TrajectoryReplayer(const std::string& joint_states_topic, fl
 
 using namespace std;
 
-bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& req
-, SendHackedTrajectory::Response& res)
+bool TrajectoryReplayer::sendTrajectoryCb(SendTrajectory::Request& req
+, SendTrajectory::Response& res)
 {
 	int numberOfJoints = 5;
 	int numberOfGripperJoints = 2;
 	//bool joint1changed = false;
 	double joint1value = 0.0;
-	armPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 100);
-	armGripperPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/gripper_controller/position_command", 100);
+	armPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/arm_controller/position_command", 1);
+	armGripperPositionsPublisher = nh_.advertise<brics_actuator::JointPositions > ("arm_1/gripper_controller/position_command", 1);
 
 	std_srvs::Empty empty;
 
@@ -115,7 +115,7 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 	    armGripperJointPositions[i-5].unit = boost::units::to_string(boost::units::si::meter);
 	}	
 	//cout << armGripperJointPositions[0].unit;
-        ROS_INFO("sendHackedTrajectory: Moving to the starting point of the trajectory");
+        ROS_INFO("sendTrajectory: Moving to the starting point of the trajectory");
         command.positions = armJointPositions;
 	commandGripper.positions = armGripperJointPositions;
         armPositionsPublisher.publish(command);
@@ -150,8 +150,8 @@ bool TrajectoryReplayer::sendHackedTrajectoryCb(SendHackedTrajectory::Request& r
 	    armGripperPositionsPublisher.publish(commandGripper);
             ros::Duration(0.1).sleep();
         }
-        ROS_INFO("sendHackedTrajectory: Finished");
-	res.response_message = "sendHackedTrajectory: Finished";
+        ROS_INFO("sendTrajectory: Finished");
+	res.response_message = "sendTrajectory: Finished";
 	return true;
 
 }

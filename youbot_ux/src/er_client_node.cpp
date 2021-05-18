@@ -44,8 +44,8 @@ int main(int argc, char** argv)
   temoto_er_manager::LoadExtResource load_resource_msg_drive;
   temoto_er_manager::LoadExtResource load_resource_msg_velocity;
   temoto_er_manager::LoadExtResource load_resource_msg_velocity_grasp;
-  temoto_er_manager::LoadExtResource load_resource_msg_youbot_record_grasp_control;
-  temoto_er_manager::LoadExtResource load_resource_msg_trajectory_record;
+  temoto_er_manager::LoadExtResource load_resource_msg_youbot_trajectory_record;
+  temoto_er_manager::LoadExtResource load_resource_msg_trajectory_replayer;
   
   // block for loading and unloading of nodes
   while(ros::ok())
@@ -58,32 +58,32 @@ int main(int argc, char** argv)
         load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py");
         ermi.unloadResource(load_resource_msg_velocity);
         ermi.unloadResource(load_resource_msg_velocity_grasp);
-	ermi.unloadResource(load_resource_msg_youbot_record_grasp_control);
-        ermi.unloadResource(load_resource_msg_trajectory_record);
+        ermi.unloadResource(load_resource_msg_youbot_trajectory_record);
+	ermi.unloadResource(load_resource_msg_trajectory_replayer);
       }
       else if (currentState == "manipulatorPerJoint") {
 	//cout << "MANIPULATORPERJOINT";
         load_resource_msg_velocity = ermi.loadRosResource("youbot_ux", "youbot_velocity_move.py");
         load_resource_msg_velocity_grasp = ermi.loadRosResource("youbot_ux", "youbot_velocity_move_grasp.py");
         ermi.unloadResource(load_resource_msg_drive);
-	ermi.unloadResource(load_resource_msg_youbot_record_grasp_control);
-        ermi.unloadResource(load_resource_msg_trajectory_record);
+        ermi.unloadResource(load_resource_msg_youbot_trajectory_record);
+	ermi.unloadResource(load_resource_msg_trajectory_replayer);
       }
       else if (currentState == "trajectoryRecord") {
 	//cout << "TRAJECTORYRECORD";
-        load_resource_msg_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record.py");
-	load_resource_msg_youbot_record_grasp_control = ermi.loadRosResource("youbot_ux", "youbot_record_grasp_control.py");
+        load_resource_msg_youbot_trajectory_record = ermi.loadRosResource("youbot_ux", "youbot_trajectory_record.py");
+	load_resource_msg_trajectory_replayer = ermi.loadRosResource("trajectory_replayer", "trajectory_replayer_node");
         ermi.unloadResource(load_resource_msg_drive);
         ermi.unloadResource(load_resource_msg_velocity);
-        ermi.unloadResource(load_resource_msg_velocity_grasp);
+        //ermi.unloadResource(load_resource_msg_velocity_grasp);
       }
       else if (currentState == "safeMode") {
 	//cout << "SAFEMODE";
         ermi.unloadResource(load_resource_msg_drive);
         ermi.unloadResource(load_resource_msg_velocity);
         ermi.unloadResource(load_resource_msg_velocity_grasp);
-	ermi.unloadResource(load_resource_msg_youbot_record_grasp_control);
-        ermi.unloadResource(load_resource_msg_trajectory_record);
+        ermi.unloadResource(load_resource_msg_youbot_trajectory_record);
+	ermi.unloadResource(load_resource_msg_trajectory_replayer);
       }
       lastState = currentState;
       

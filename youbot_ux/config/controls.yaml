@@ -17,12 +17,13 @@ control_options:
             buttonSelectorDown: 17
             axesButtonX: 0
             axesButtonXRotate: 2
-            axesButtonY: 1
+            axesButtonY1: 1
+            axesButtonY2: 3
             axisSpeedMultiplier: 0.5
         youbot_velocity_move_grasp:
             controlsSubTopic: joy
-            axisGripperClose: 4
-            axisGripperOpen: 5
+            axisGripperClose: 5
+            axisGripperOpen: 4
             axisSpeedMultiplier: 0.00025
         youbot_trajectory_record:
             controlsSubTopic: joy

@@ -24,7 +24,7 @@ class TrajectoryRecordControl:
 		self.motorsOn = rospy.ServiceProxy('arm_1/switchOnMotors', Empty) 
 		
 		self.trajectoryRecordSrv = rospy.ServiceProxy('control_trajectory_recorder', TrajectoryRecorderControl)
-		self.trajectoryReplaySrv = rospy.ServiceProxy('trajectory_playback', SendHackedTrajectory)
+		self.trajectoryReplaySrv = rospy.ServiceProxy('trajectory_playback', SendTrajectory)
 		
 		self.recordControlButtonState = 0
 		self.playbackControlButtonState = 0

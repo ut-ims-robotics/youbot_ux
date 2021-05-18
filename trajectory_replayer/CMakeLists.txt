@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_service_files(
   FILES
-  SendHackedTrajectory.srv
+  SendTrajectory.srv
 )
 
 generate_messages(

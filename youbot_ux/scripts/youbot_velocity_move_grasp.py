@@ -15,8 +15,10 @@ class YoubotArm:
 		self.gripperPub = rospy.Publisher("arm_1/gripper_controller/position_command", JointPositions, queue_size=1)
 		self.stateSub = rospy.Subscriber(rospy.get_param('~state_sub_topic', "state"), String, self.getState)
 		self.joySub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/controlsSubTopic', "joy"), Joy, self.getJoy)		
+		self.trajectoryRecordStateSub = rospy.Subscriber(rospy.get_param('~trajectory_record_state_topic', "trajectory_record_state"), String, self.getTrajectoryRecordState)  
 
 		self.stateMessage = "safemode"
+		self.trajectoryRecordState = None
 		self.prevClick = 0
 		self.currentSelected = 0
 		
@@ -36,14 +38,17 @@ class YoubotArm:
 	def getState(self, string):
 		self.stateMessage = string.data
 		#print(self.stateMessage)
+
+	def getTrajectoryRecordState(self, state):
+		self.trajectoryRecordState = state.data
 	
 	# function for getting and saving controller values
 	def getJoy(self, joy):
-		self.axisGripperClose = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperClose', 4)]
-		self.axisGripperOpen = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperOpen', 5)]
+		self.axisGripperClose = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperClose', 5)]
+		self.axisGripperOpen = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move_grasp/axisGripperOpen', 4)]
 
 	def publishGripperJointPositions(self):
-		if self.stateMessage == "manipulatorPerJoint":
+		if self.stateMessage == "manipulatorPerJoint" or (self.stateMessage == "trajectoryRecord" and self.trajectoryRecordState != "playback"):
 
 			self.gripperCurrent += self.axisSpeedMultiplier*(-1*self.axisGripperClose+self.axisGripperOpen)
 			if self.gripperLast != self.gripperCurrent:

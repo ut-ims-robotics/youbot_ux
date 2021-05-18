@@ -27,7 +27,8 @@ class YoubotArm:
 
 		self.jointAxisButtonX1 = 0.0
 		self.jointAxisButtonX2 = 0.0
-		self.jointAxisButtonY = 0.0	
+		self.jointAxisButtonY1 = 0.0
+		self.jointAxisButtonY2 = 0.0	
 
 		self.rate = rospy.Rate(10)
 
@@ -42,8 +43,8 @@ class YoubotArm:
 		self.jointSelectorDown = joy.buttons[rospy.get_param('~/control_options/controls/youbot_velocity_move/buttonSelectorDown', 17)]
 		self.jointAxisButtonX1 = -joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonX', 0)]
 		self.jointAxisButtonX2 = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonXRotate', 2)]
-		self.jointAxisButtonY = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonY', 1)]
-		
+		self.jointAxisButtonY1 = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonY1', 1)]
+		self.jointAxisButtonY2 = joy.axes[rospy.get_param('~/control_options/controls/youbot_velocity_move/axesButtonY2', 3)]
 
 	def publishArmJointVelocities(self):
 		if self.stateMessage == "manipulatorPerJoint":
@@ -52,8 +53,8 @@ class YoubotArm:
 			if self.prevClick == 0 and (self.jointSelectorUp == 1 or self.jointSelectorDown == 1):
 				if self.jointSelectorUp:
 					self.currentSelected += 1
-					if self.currentSelected > 3:
-						self.currentSelected = 3
+					if self.currentSelected > 2:
+						self.currentSelected = 2
 				if self.jointSelectorDown:
 					self.currentSelected -= 1
 					if self.currentSelected < 1:
@@ -70,8 +71,9 @@ class YoubotArm:
 			joint5 = 0.0
 
 			jointVelocities = [joint1, joint2, joint3, joint4, joint5]
-			jointVelocities[self.currentSelected] = self.axisSpeedMultiplier*(self.jointAxisButtonY)
+			jointVelocities[self.currentSelected] = self.axisSpeedMultiplier*(self.jointAxisButtonY1)
 			jointVelocities[0] = self.axisSpeedMultiplier*(self.jointAxisButtonX1)
+			jointVelocities[3] = self.axisSpeedMultiplier*(self.jointAxisButtonY2)
 			jointVelocities[4] = self.axisSpeedMultiplier*(self.jointAxisButtonX2)
 
 			jointCommands = []
