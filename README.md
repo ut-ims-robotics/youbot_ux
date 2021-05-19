@@ -136,7 +136,7 @@ Unless the robot is intended to be moving, the robot should be powered from the 
 Before starting up the on-board computer, turn on the youBot's motors, including the manipulator's motors. Otherwise, if youBot's driver is started up with the previously set up service after the OS has booted, the youBot's driver won't detect the robot's base's and manipulator's motors. <br/>
 **Turning off the motors of the manipulators will cause the manipulator to collapse**
 
-After running the youbot_ux launcher.launch file or after it has automatically been started by a service, turn on your DualShock 4 controller. You can do so by pressing the PS button (button in the middle of 2 analog sticks), after which a blue LED light should start blinking. When it is connected and everything works correctly, the LED should be solid blue.
+After running the youbot_ux launcher.launch file or after it has automatically been started by the service, turn on your DualShock 4 controller. You can do so by pressing the PS button (button in the middle of 2 analog sticks), after which a blue LED light should start blinking. When it is connected and everything works correctly, the LED should be solid blue.
 
 ### Using the robot
 
@@ -166,13 +166,15 @@ Teach mode Playback LED indication: Purple
 
 ## Shutting down
 
-If controller is to be used, shutting down of ROS nodes is by pressing the "share" and "options" key on the controller while in "safe mode" regime of the robot. After doing so, the LED light on the controller should become very dimly lit blue, indicating that most nodes, except for /rosout, should be turned off. 
+If the controller is to be used, shutting down of ROS nodes is by pressing the "share" and "options" key on the controller while in "safe mode" regime of the robot. After doing so, the LED light on the controller should become very dimly lit blue, indicating that most nodes, except for /rosout, should be turned off. 
 
-Even though nodes can be turned off with a controller, the on-board computer can't. That can be done via SSH by connecting to it from another computer that is on the same network as the robot is connected to with the command "ssh bench5atimsr@<youbotIP>". After connecting to the robot's on-board computer, it can be shut down with the command "sudo shutdown -h now".
+Even though nodes can be turned off with a controller, the on-board computer can't. That can be done via SSH by connecting to it from another computer that is on the same network as the robot with the command "ssh bench5atimsr@<youbotIP>". After connecting to the robot's on-board computer, it can be shut down with the command "sudo shutdown -h now".
   
 After turning off the computer, the power to the robot can be turned off via the system menu on top of the robot's base by selecting "system off".
+  
+Don't forget to disconnect the battery, if connected.
 
-## Manipulator moving to wrong location during calibration
+## Manipulator moving to a wrong location during calibration
 
-Turn the system off completely (PC off, motors off), remove the battery, external power, put the manipulator into its correct calibrated position.
+Turn the system completely off  (PC off, motors off), remove the battery, external power, put the manipulator into its correct calibrated position.
 Without power, press the button used to turn systems on as a precaution. After that, turn everything back on as per usual.
