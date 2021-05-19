@@ -36,7 +36,7 @@ $ source ~/catkin_ws/devel/setup.bash
 
 Save the file and exit.
 
-NB! Before continuing you will have to close and reopen all the terminal windows for the sourcing to work.
+**NB!** Before continuing you will have to close and reopen all the terminal windows for the sourcing to work.
 
 Now clone the youbot repositories to our catkin workspace's ~/catkin_ws/src folder:
 
@@ -50,7 +50,7 @@ $ git clone -b noetic-devel https://github.com/ros/executive_smach.git
 $ git clone --recursive https://github.com/temoto-telerobotics/yaml-cpp
 $ git clone -b melodic https://github.com/ut-ims-robotics/youbot_ux.git
 ```
-
+<br/>
 Clone temoto_core and temoto ERM packages according to these [instructions](https://github.com/temoto-telerobotics/temoto_er_manager/tree/feature-standalone).
 
 Then, clone the yaml-cpp package to the ~/catkin_ws/src folder:
@@ -59,7 +59,7 @@ Then, clone the yaml-cpp package to the ~/catkin_ws/src folder:
 $ cd ~/catkin_ws/src
 $ git clone --recursive https://github.com/temoto-telerobotics/yaml-cpp
 ```
-
+<br/>
 The following instructions are for controller related packages for ROS:
 
 ```bash
@@ -79,9 +79,9 @@ At this point, build the workspace:
 ```bash
 $ cd ~/catkin_ws/
 $ catkin build
-```<br/><br/>
+```
 
-
+<br/>
 If you were to run the youBot driver now, it wouldn't find the manipulator nor base motors due to not having the rights and not looking on the right network adapter, so first, lets set the rights (has to be done every time after running "catkin build"):
 ```bash
 $ cd ~
@@ -92,7 +92,7 @@ $ sudo ldconfig /opt/ros/melodic/lib
 To select the right network adapter, change the "EthernetDevice =" line in ~/catkin_ws/src/youbot_driver/config/youbot-ethercat.cfg to the adapter being used to connect to the robot. In this case, it should be "EthernetDevice = enx00e04c2151d2". <br/><br/>
 You also must change the "USB Ethernet" device settings in Ubuntus network settings. Go to its settings, under IPv4 tab, change the "IPv4" method to "Manual" and add an address 10.10.10.10 with a netmask 255.255.255.0
 
-
+<br/>
 Now, source using the following command:
 ```bash
 source ~/catkin_ws/devel/setup.bash
@@ -131,31 +131,37 @@ For future development, "sudo su" and then "systemctl disable youbot_boot" so it
 
 ## Using the robot
 ### Startup
-Unless the robot is intended to be moving, powering of the robot should be done from the 24V external power supply, which connects to the top side of the youBots base. Otherwise, the battery of the device should be connected to the side of the robot's base. The battery should never be connected if the robot's is not intended to be used. The battery is charged if both the battery and the external power supply are connected to the robot.
+Unless the robot is intended to be moving, the robot should be powered from the 24V external power supply, which connects to the top side of the youBot's base. Otherwise, the battery of the device should be connected to the side of the robot's base. The battery should never be connected if the robot is not intended to be used. The battery is charged if both the battery and the external power supply are connected to the robot.
 
-Before starting up the on-board computer, turn on the youBots motors, including the manipulator's motors. Otherwise, if youbot driver is started up on OS boot with previously set up service, the youbot's driver won't detect the robot's base's and manipulator's motors. **Turning off the motors of the manipulators will cause the manipulator to collapse**
+Before starting up the on-board computer, turn on the youBot's motors, including the manipulator's motors. Otherwise, if youBot's driver is started up with the previously set up service after the OS has booted, the youBot's driver won't detect the robot's base's and manipulator's motors. <br/>
+**Turning off the motors of the manipulators will cause the manipulator to collapse**
 
 After running the youbot_ux launcher.launch file or after it has automatically been started by a service, turn on your DualShock 4 controller. You can do so by pressing the PS button (button in the middle of 2 analog sticks), after which a blue LED light should start blinking. When it is connected and everything works correctly, the LED should be solid blue.
 
 ### Using the robot
 
-When initially starting the youbot_ux package with the launcher, the robot will be in "safe mode" with blue light being indicated on the controller. Next, button uses and indicators will be shown in different modes.
+When initially starting the youbot_ux package with the launcher, the robot will be in "safe mode" with blue light being indicated on the controller.<br/>  
+Next,  button configurations and indications of all the regimes will be shown:
 
 #### Safe mode
-Safe mode LED indication: Blue  
+Safe mode LED indication: Blue <br/>
+<br/> 
 ![Safe Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Safe.PNG)
 #### Driving mode
-Driving mode LED indication: Blue  
+Driving mode LED indication: Green <br/> 
+<br/>
 ![Driving Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Driving.PNG)
 #### Manipulator control
 Manipulator control LED indication: Yellow  
-Joint selection vibration indication: joint 2 = 0.1s, joint 3 = 0.3s, joint 4 = 0.5s
+Joint selection vibration indication: joint 2 = 0.1s, joint 3 = 0.3s, joint 4 = 0.5s<br/>
+<br/>
 ![Manipulator Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Manipulator.PNG)
 #### Teach mode
 Teach mode Idle LED indication: Light Blue  
 Teach mode Recording LED indication: Red  
 Teach mode Playback LED indication: Purple
-**Caution: turning off manipulator's motors will cause the manipulator to collapse**
+**Caution: turning off manipulator's motors will cause the manipulator to collapse**<br/>
+<br/>
 ![Teach Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Teach.PNG)
 
 ## Shutting down
