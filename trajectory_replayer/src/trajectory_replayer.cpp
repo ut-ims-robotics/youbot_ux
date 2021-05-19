@@ -1,3 +1,5 @@
+//Original code at https://github.com/ut-ims-robotics-sandbox/robert_v_sandbox/tree/teach-mode-devel/trajectory_recorder. Current package slighly modified.
+
 #include "trajectory_replayer/trajectory_replayer.h"
 #include "iostream"
 #include "std_srvs/Empty.h"
