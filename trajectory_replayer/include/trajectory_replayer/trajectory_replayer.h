@@ -1,3 +1,5 @@
+//Original code at https://github.com/ut-ims-robotics-sandbox/robert_v_sandbox/tree/teach-mode-devel/trajectory_recorder. Current package slighly modified.
+
 #ifndef TRAJECTORY_REPLAYER__TRAJECTORY_REPLAYER_H
 #define TRAJECTORY_REPLAYER__TRAJECTORY_REPLAYER_H
 
