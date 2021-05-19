@@ -1,4 +1,4 @@
-# Original package at https://github.com/ut-ims-robotics-sandbox/robert_v_sandbox/tree/teach-mode-devel/trajectory_recorder. Current package slighly modified.
+### Original package at https://github.com/ut-ims-robotics-sandbox/robert_v_sandbox/tree/teach-mode-devel/trajectory_recorder. Current package slighly modified.
 
 # trajectory_recorder 
 The trajectory recorder listens to the [sensor_msgs/JointState](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/JointState.html) topic and assembles a [trajectory_msgs/JointTrajectory](http://docs.ros.org/en/api/trajectory_msgs/html/msg/JointTrajectory.html) message from the joint_state messages.
