@@ -1,3 +1,5 @@
+// Current file modified from original found at https://github.com/ut-ims-robotics-sandbox/robert_v_sandbox/tree/teach-mode-devel/trajectory_recorder
+
 #include "trajectory_recorder/trajectory_recorder.h"
 #include "iostream"
 
