@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
 
-
 import rospy
 from sensor_msgs.msg import Joy
 from std_msgs.msg import String
@@ -10,7 +9,6 @@ from trajectory_recorder.srv import *
 
 import time
 
-# shutdown pc from ros? Currently rosnode kill -a from safe mode
 
 class TrajectoryRecordControl:
 	def __init__(self):
@@ -68,19 +66,18 @@ class TrajectoryRecordControl:
 					while self.recordControlButtonState:
 						self.rate.sleep()
 
-				if self.motorControlButtonState and self.motorCurrentState == 1: # to turn on/off motor resistance
-					self.motorsOff()
-					self.motorCurrentState = 0 
-					self.rate.sleep()
-				elif self.motorControlButtonState == 0 and self.motorCurrentState == 0:
-					self.motorsOn()
-					self.motorCurrentState = 1
-					self.rate.sleep()
-					
-
 			elif self.trajectoryRecordState == "playback": # wait for trajectory playback service and go back to idle regime
 				self.trajectoryReplaySrv()
 				self.trajectoryRecordState = "idle"
+	
+			if self.motorControlButtonState and self.motorCurrentState == 1: # to turn on/off motor resistance
+				self.motorsOff()
+				self.motorCurrentState = 0 
+				self.rate.sleep()
+			elif self.motorControlButtonState == 0 and self.motorCurrentState == 0:
+				self.motorsOn()
+				self.motorCurrentState = 1
+				self.rate.sleep()
 	
 	def trajectoryRecordControlStop(self):
 		#self.motorsOn()
