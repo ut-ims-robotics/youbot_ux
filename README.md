@@ -37,11 +37,15 @@ $ catkin build
 
 Now source the setup file. So you would not have to source it every time you open a new terminal we will write the source command in the .bashrc file.
 
+```bash
 $ gedit ~/.bashrc
+```
 
 This will open the text editor. You will need to add this line to the end of the file if it not already there:
 
+```bash
 source ~/catkin_ws/devel/setup.bash
+```
 
 Save the file and exit.
 
@@ -75,9 +79,9 @@ $ git clone https://github.com/naoki-mizuno/ds4_driver.git
 ```
 To attach and connect the DualShock 4 controller to the on-board controller, go to Ubuntu's bluetooth settings, hold the PS button (button in the middle of 2 analog sticks) and the share button until it starts blinking rapidly. After the controller's LED starts blinking, a "Wireless Controller" should show up on the Ubuntu's bluetooth devices menu. Click on it and it should connect.
 
-Now we will get the youbot_ux package for controlling the robot with the controller:
+Now clone youbot_ux package to ~/catkin_ws/src folder for controlling the robot with the controller:
 ```bash
-git clone -b melodic https://github.com/ScazLab/youbot-manipulation.git
+git clone -b melodic https://github.com/ut-ims-robotics/youbot_ux.git
 ```
 
 At this point, build the workspace:
