@@ -8,7 +8,7 @@ from std_msgs.msg import String, Empty
 from std_srvs.srv import Empty
 from ds4_driver.msg import Status
 
-#state defining
+# State machine working on Smach
 
 class Driving(smach.State):
     def __init__(self):
