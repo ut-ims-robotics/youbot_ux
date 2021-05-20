@@ -63,8 +63,8 @@ class Handler(object):
 			feedback.led_g = 1.0
 			feedback.led_b = 0.0
 
-		elif self.stateMessage == "trajectoryRecord":
-			if self.trajectoryRecordState == "record":
+		elif self.stateMessage == "trajectoryRecord": 
+			if self.trajectoryRecordState == "record": # Resolving the specific case of youbot_trajectory_record having its own regime options
 				feedback.set_led = True
 				feedback.led_r = 1.0
 				feedback.led_g = 0.0
