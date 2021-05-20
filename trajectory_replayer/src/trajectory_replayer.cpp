@@ -80,7 +80,7 @@ bool TrajectoryReplayer::sendTrajectoryCb(SendTrajectory::Request& req
 		res.response_message = "no service";
 		return true;
 	}
-	if (traj.point.size() < 2) { // if there are less than 2 joint names, then in the case of youBot, there 
+	if (traj.points.size() < 2) { // if there are less than 2 joint names, then in the case of youBot, there 
 		res.response_message = "no trajectory";
 		return true;
 	}
@@ -91,8 +91,6 @@ bool TrajectoryReplayer::sendTrajectoryCb(SendTrajectory::Request& req
 	std::vector <brics_actuator::JointValue> armGripperJointPositions;
         armJointPositions.resize(numberOfJoints);
 	armGripperJointPositions.resize(numberOfGripperJoints);
-
-        ROS_INFO("** trajectory hack **");
 
         for (int i=0; i<numberOfJoints; i++)
         {

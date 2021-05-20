@@ -155,20 +155,22 @@ void TrajectoryRecorder::jointStatesCallback(const sensor_msgs::JointState& msg)
 
 void TrajectoryRecorder::addTrajectoryPoint(const sensor_msgs::JointState& msg)
 {
-  if (recorded_trajectory_.joint_names.empty())
-  {
-    recorded_trajectory_.joint_names = msg.name;
+  if (msg.name.size() == 7) {
+	  if (recorded_trajectory_.joint_names.empty())
+	  {
+	    recorded_trajectory_.joint_names = msg.name;
+	  }
+
+	  // Add the joint state msg as a new trajectory point
+	  trajectory_msgs::JointTrajectoryPoint trajectory_point;
+	  trajectory_point.positions = msg.position;
+	  trajectory_point.velocities = msg.velocity;
+	  trajectory_point.accelerations = msg.effort;
+	  trajectory_point.time_from_start = ros::Time::now() - recording_start_time_;
+	  recorded_trajectory_.points.push_back(trajectory_point);
+
+	  time_from_last_point_ = ros::Time::now();
   }
-
-  // Add the joint state msg as a new trajectory point
-  trajectory_msgs::JointTrajectoryPoint trajectory_point;
-  trajectory_point.positions = msg.position;
-  trajectory_point.velocities = msg.velocity;
-  trajectory_point.accelerations = msg.effort;
-  trajectory_point.time_from_start = ros::Time::now() - recording_start_time_;
-  recorded_trajectory_.points.push_back(trajectory_point);
-
-  time_from_last_point_ = ros::Time::now();
 }
 
 bool TrajectoryRecorder::trajectoryRecorderControlCb(TrajectoryRecorderControl::Request& req
