@@ -24,7 +24,7 @@ class YoubotArm:
 		self.currentSelected = 0
 		
 		self.gripperWidthOpen = 0.0099 # value set to check if gripper is open
-		self.gripperCurrent = rospy.get_param("arm_1_gripper/gripper_value", 0.007) # memory and init of value for current gripper state (usual after default calibration)
+		self.gripperCurrent = rospy.get_param("arm_1_gripper/gripper_value", 0.008) # memory and init of value for current gripper state (usual after default calibration)
 		self.gripperLast = 0.1 # forcing initial alignment
 
 		# init of gripper change multiplier and controls 
