@@ -9,14 +9,15 @@ from trajectory_recorder.srv import *
 
 import time
 
+# user for controlling the trajectory_recorder and trajectory_replayer nodes
 
 class TrajectoryRecordControl:
 	def __init__(self):
 		self.trajectoryRecordStatePub = rospy.Publisher('trajectory_record_state', String, queue_size=1)
 		self.stateSub = rospy.Subscriber(rospy.get_param('~sub_topic', "state"), String, self.getState)
 		self.joySub = rospy.Subscriber(rospy.get_param('~/control_options/controls/youbot_trajectory_record/controlsSubTopic', "joy"), Joy, self.subJoyStates)
-		self.trajectoryRecordState = "idle"
-		self.stateMessage = "safemode"
+		self.trajectoryRecordState = "idle" # local regime state (if recording, idle or playback)
+		self.stateMessage = "safemode" # general regime state
 
 		self.motorsOff = rospy.ServiceProxy('arm_1/switchOffMotors', Empty)
 		self.motorsOn = rospy.ServiceProxy('arm_1/switchOnMotors', Empty) 
@@ -79,7 +80,7 @@ class TrajectoryRecordControl:
 				self.motorCurrentState = 1
 				self.rate.sleep()
 	
-	def trajectoryRecordControlStop(self):
+	def trajectoryRecordControlStop(self): # on node close, local regime to None and publish it
 		#self.motorsOn()
 		self.trajectoryRecordState = "None"
 		self.trajectoryRecordStatePub.publish(self.trajectoryRecordState)
