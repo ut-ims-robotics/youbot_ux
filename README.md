@@ -4,12 +4,12 @@ Download the desktop image of Ubuntu 18.04.5 from [here](https://releases.ubuntu
 
 Install Ubuntu 18.04.5 onto youBots on-board computer with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
 
-Install ROS with instructions from [here](http://wiki.ros.org/melodic/Installation/Ubuntu).
+Install ROS Melodic with instructions from [here](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
 
 Install required packages:
 ```bash
-sudo apt-get install ros-melodic-pr2-msgs ros-melodic-brics-actuator ros-melodic-moveit git ros-melodic-ros-control ros-melodic-ros-controllers ros-melodic-joy ros-melodic-joystick-drivers ros-melodic-moveit-visual-tools python-rospkg libbluetooth-dev libcwiid-dev python-catkin-tools python3-catkin-pkg-modules python3-rospkg-modules
+sudo apt-get install ros-melodic-pr2-msgs ros-melodic-brics-actuator ros-melodic-moveit git ros-melodic-ros-control ros-melodic-ros-controllers ros-melodic-joy ros-melodic-joystick-drivers ros-melodic-moveit-visual-tools python-rospkg libbluetooth-dev libcwiid-dev python-catkin-tools python3-catkin-pkg-modules python3-rospkg-modules python3-setuptools
 ```
 
 Next, you will need a catkin workspace. If you do not have it, use the following commands to create it.
@@ -51,19 +51,13 @@ $ git clone --recursive https://github.com/temoto-telerobotics/yaml-cpp
 $ git clone -b melodic https://github.com/ut-ims-robotics/youbot_ux.git
 ```
 <br/>
+
 Clone temoto_core and temoto ERM packages according to these [instructions](https://github.com/temoto-telerobotics/temoto_er_manager/tree/feature-standalone).
 
-Then, clone the yaml-cpp package to the ~/catkin_ws/src folder:
-
-```bash
-$ cd ~/catkin_ws/src
-$ git clone --recursive https://github.com/temoto-telerobotics/yaml-cpp
-```
-
-<br/>
 The following instructions are for controller related packages for ROS:
 
 ```bash
+$ cd ~/catkin_ws/
 $ git clone https://github.com/naoki-mizuno/ds4drv --branch devel
 $ cd ds4drv
 $ mkdir -p ~/.local/lib/python3.6/site-packages
