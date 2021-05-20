@@ -59,6 +59,7 @@ Then, clone the yaml-cpp package to the ~/catkin_ws/src folder:
 $ cd ~/catkin_ws/src
 $ git clone --recursive https://github.com/temoto-telerobotics/yaml-cpp
 ```
+
 <br/>
 The following instructions are for controller related packages for ROS:
 
@@ -76,6 +77,7 @@ $ git clone https://github.com/naoki-mizuno/ds4_driver.git
 To attach and connect the DualShock 4 controller to the on-board controller, go to Ubuntu's bluetooth settings, hold the PS button (button in the middle of 2 analog sticks) and the share button until it starts blinking rapidly. After the controller's LED starts blinking, a "Wireless Controller" should show up on the Ubuntu's bluetooth devices menu. Click on it and it should connect.
 
 At this point, build the workspace:
+
 ```bash
 $ cd ~/catkin_ws/
 $ catkin build
@@ -83,6 +85,7 @@ $ catkin build
 
 <br/>
 If you were to run the youBot driver now, it wouldn't find the manipulator nor base motors due to not having the rights and not looking on the right network adapter, so first, lets set the rights (has to be done every time after running "catkin build"):
+
 ```bash
 $ cd ~
 $ sudo setcap cap_net_raw+ep ~/catkin_ws/devel/.private/youbot_driver_ros_interface/lib/youbot_driver_ros_interface/youbot_driver_ros_interface
