@@ -155,7 +155,7 @@ void TrajectoryRecorder::jointStatesCallback(const sensor_msgs::JointState& msg)
 
 void TrajectoryRecorder::addTrajectoryPoint(const sensor_msgs::JointState& msg)
 {
-  if (msg.name.size() == 7) {
+  if (msg.name.size() == 7) { // manipulator + gripper = 7 joints (which is needed). Base has a total of 8 joints
 	  if (recorded_trajectory_.joint_names.empty())
 	  {
 	    recorded_trajectory_.joint_names = msg.name;
