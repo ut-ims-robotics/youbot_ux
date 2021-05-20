@@ -1,3 +1,5 @@
+// Used for loading and unloading ROS nodes
+
 #include "ros/ros.h"
 #include "temoto_er_manager/temoto_er_manager_interface.h"
 #include <std_msgs/String.h>
@@ -8,7 +10,7 @@ std::string currentState = "safeMode";
 std::string lastState = "safeMode";
 
 using namespace std;
-void stateCallback(const std_msgs::String::ConstPtr& str) 
+void stateCallback(const std_msgs::String::ConstPtr& str) // for getting current regime string
 {
   //cout << "SUBSCRIBE";
   //cout << str->data;
@@ -55,8 +57,8 @@ int main(int argc, char** argv)
     if (currentState != lastState) {
       if (currentState == "driving") {
 	//cout << "DRIVING";
-        load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py");
-        ermi.unloadResource(load_resource_msg_velocity);
+        load_resource_msg_drive = ermi.loadRosResource("youbot_ux", "youbot_drive_joy.py"); // to load a node
+        ermi.unloadResource(load_resource_msg_velocity); // to unload a node
         ermi.unloadResource(load_resource_msg_velocity_grasp);
         ermi.unloadResource(load_resource_msg_youbot_trajectory_record);
 	ermi.unloadResource(load_resource_msg_trajectory_replayer);
