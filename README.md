@@ -181,3 +181,13 @@ Don't forget to disconnect the battery, if connected.
 
 Turn the system completely off  (PC off, motors off), remove the battery, external power, put the manipulator into its correct calibrated position.
 Without power, press the button used to turn systems on as a precaution. After that, turn everything back on as per usual.
+  
+## Driver requiring root rights
+  
+Use the following:
+  
+```bash
+$ cd ~
+$ sudo setcap cap_net_raw+ep ~/catkin_ws/devel/.private/youbot_driver_ros_interface/lib/youbot_driver_ros_interface/youbot_driver_ros_interface
+$ sudo ldconfig /opt/ros/melodic/lib
+```
