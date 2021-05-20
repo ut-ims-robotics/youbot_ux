@@ -80,7 +80,7 @@ bool TrajectoryReplayer::sendTrajectoryCb(SendTrajectory::Request& req
 		res.response_message = "no service";
 		return true;
 	}
-	if (traj.joint_names.size() < 5) {
+	if (traj.point.size() < 2) { // if there are less than 2 joint names, then in the case of youBot, there 
 		res.response_message = "no trajectory";
 		return true;
 	}
@@ -98,18 +98,8 @@ bool TrajectoryReplayer::sendTrajectoryCb(SendTrajectory::Request& req
         {
             armJointPositions[i].joint_uri = traj.joint_names[i];
             armJointPositions[i].unit = boost::units::to_string(boost::units::si::radians);
+            armJointPositions[i].value = traj.points[0].positions[i];
 
-            //if (i == 0)
-            //{
-                //if (joint1changed)
-                //    armJointPositions[i].value = joint1value;
-                //else
-            //        armJointPositions[i].value = traj.points[0].positions[i];
-            //}
-            //else
-            //{
-                armJointPositions[i].value = traj.points[0].positions[i];
-            //}
         }
 	for (int i=5; i<numberOfJoints+numberOfGripperJoints; i++){
 	    armGripperJointPositions[i-5].joint_uri = traj.joint_names[i];
@@ -129,17 +119,7 @@ bool TrajectoryReplayer::sendTrajectoryCb(SendTrajectory::Request& req
         {
             for (int i=0; i<numberOfJoints; i++)
             {
-                //if (i == 0)
-                //{
-                    //if (joint1changed)
-                    //    armJointPositions[0].value = joint1value;
-                    //else
-                      //  armJointPositions[0].value = traj.points[j].positions[0];
-                //}
-                //else
-                //{
-                    armJointPositions[i].value = traj.points[j].positions[i];
-                //}
+                armJointPositions[i].value = traj.points[j].positions[i];
 	    }
 	    for (int i=5; i<numberOfJoints+numberOfGripperJoints; i++){
 		armGripperJointPositions[i-5].value = traj.points[j].positions[i];
