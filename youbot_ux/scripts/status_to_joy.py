@@ -5,7 +5,8 @@ import copy
 from sensor_msgs.msg import Joy
 from ds4_driver.msg import Status
 
-# Built by example from ds4_driver controller_ros node
+# Built by example from ds4_driver controller_ros node at https://github.com/naoki-mizuno/ds4_driver/blob/e23c2676d5fa10fe45557cb61ea22dfa32dd3145/nodes/ds4_twist_node.py
+# For converting ds4_driver /status topic messages for /joy topic
 
 class StatusConverter():
 	def __init__(self):
@@ -17,7 +18,7 @@ class StatusConverter():
 		self.rate = rospy.Rate(100)
 
 		period = 1.0 / self._autorepeat_rate
-		rospy.Timer(rospy.Duration(period), self.prev_joy_republish)
+		rospy.Timer(rospy.Duration(period), self.prev_joy_republish) # To slow down input conversions
 
 	def status_to_joy(self, status):
 		msg = Joy()
