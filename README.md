@@ -1,8 +1,8 @@
 ## Setting up the on-board computer
 
-Download the desktop image of Ubuntu 18.04.5 from [here](https://releases.ubuntu.com/18.04/).
+Download the desktop image of Ubuntu 18.04.5 from [here](https://releases.ubuntu.com/18.04/) and put it onto a flash drive.
 
-Install Ubuntu 18.04.5 onto youBots on-board computer with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
+Install Ubuntu 18.04.5 onto youBot's on-board computer with this [tutorial](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview).
 
 Install ROS Melodic with instructions from [here](http://wiki.ros.org/melodic/Installation/Ubuntu).
 
@@ -68,7 +68,7 @@ $ sudo udevadm trigger
 $ cd ~/catkin_ws/src
 $ git clone https://github.com/naoki-mizuno/ds4_driver.git
 ```
-To attach and connect the DualShock 4 controller to the on-board controller, go to Ubuntu's bluetooth settings, hold the PS button (button in the middle of 2 analog sticks) and the share button until it starts blinking rapidly. After the controller's LED starts blinking, a "Wireless Controller" should show up on the Ubuntu's bluetooth devices menu. Click on it and it should connect.
+To attach and connect the DualShock 4 controller to the on-board controller, go to Ubuntu's bluetooth settings, hold the PS button (button in the middle of 2 analog sticks) and the share button until it starts blinking rapidly. After the controller's LED starts blinking, a "Wireless Controller" should show up on the Ubuntu's bluetooth devices menu. Click on it and it should connect. When connected, the LED on the controller should be solid blue.
 
 At this point, build the workspace:
 
@@ -87,22 +87,23 @@ $ sudo ldconfig /opt/ros/melodic/lib
 ```
 
 To select the right network adapter, change the "EthernetDevice =" line in ~/catkin_ws/src/youbot_driver/config/youbot-ethercat.cfg to the adapter being used to connect to the robot. In this case, it should be "EthernetDevice = enx00e04c2151d2". <br/><br/>
-You also must change the "USB Ethernet" device settings in Ubuntus network settings. Go to its settings, under IPv4 tab, change the "IPv4" method to "Manual" and add an address 10.10.10.10 with a netmask 255.255.255.0
+You also must change the "USB Ethernet" device settings in Ubuntu's network settings. Go to Settings -> Network -> Click on "USB Ethernet" settings icon -> under "IPv4" tab, change the "IPv4 method" to "Manual" and add an address 10.10.10.10 with netmask 255.255.255.0.
 
 <br/>
 Now, source using the following command:
+
 ```bash
 source ~/catkin_ws/devel/setup.bash
 ```
 
-Next, you should be able to run the youbout_ux package with the following command:
+Next, you should be able to run the youbout_ux package with the following command (turn on the youBot's motors beforehand to use it with the controller):
 ```bash
 roslaunch youbot_ux launcher.launch
 ```
 
 ## Launch on system startup with service
 
-Make a file at "/etc/systemd/system/" called "youbot_boot.service" (you may need sudo privileges) and put the following part in the box into it. Make sure to replace the &lt;your username here&gt; parts with the actual username.
+Make a file at "/etc/systemd/system/" called "youbot_boot.service" (you may need sudo privileges) and put the following part in the box into it. Make sure to replace the &lt;your username here&gt; parts with the actual computer's user's username.
 ```bash
 [Unit]
 Description=Start Youbot ROS bringup nodes
@@ -120,25 +121,28 @@ User=<your username here>
 WantedBy=multi-user.target
 ```
 
-Now run "systemctl daemon-reload"
+Then save and close the file.
 
-You can start the service with "systemctl start youbot_boot" and enable the service to start on boot with "systemctl enable youbot_boot"
+Now, run "systemctl daemon-reload".
 
-For future development, "sudo su" and then "systemctl disable youbot_boot" so it would no longer be launched on system boot
+You can start the service with the command "systemctl start youbot_boot" and enable the service to start on boot with "systemctl enable youbot_boot".
+
+To stop the service from launching on system boot, use the command "systemctl disable youbot_boot".
 
 ## Using the robot
 ### Startup
 Unless the robot is intended to be moving, the robot should be powered from the 24V external power supply, which connects to the top side of the youBot's base. Otherwise, the battery of the device should be connected to the side of the robot's base. The battery should never be connected if the robot is not intended to be used. The battery is charged if both the battery and the external power supply are connected to the robot.
 
-Before starting up the on-board computer, turn on the youBot's motors, including the manipulator's motors. Otherwise, if youBot's driver is started up with the previously set up service after the OS has booted, the youBot's driver won't detect the robot's base's and manipulator's motors. <br/>
+Before starting up the on-board computer, turn on the youBot's motors, including the manipulator's motors. Otherwise, if youBot's driver is started up (automatically with the service or manually) after the OS has booted, the youBot's driver won't detect the robot's base's and manipulator's joints (requiring the driver (and other nodes) to be restarted). <br/>
+
 **Turning off the motors of the manipulators will cause the manipulator to collapse**
 
-After running the youbot_ux launcher.launch file or after it has automatically been started by the service, turn on your DualShock 4 controller. You can do so by pressing the PS button (button in the middle of 2 analog sticks), after which a blue LED light should start blinking. When it is connected and everything works correctly, the LED should be solid blue.
+After running the youbot_ux launcher.launch file or after it has automatically been started by the service, turn on your DualShock 4 controller. You can do so by pressing the PS button (button in the middle of 2 analog sticks), after which a blue LED light should start blinking. When it is connected, the LED should be solid blue.
 
 ### Using the robot
 
 When initially starting the youbot_ux package with the launcher, the robot will be in "safe mode" with blue light being indicated on the controller.<br/>  
-Next,  button configurations and indications of all the regimes will be shown:
+Next, button configurations and indications of all the regimes will be shown in the order they can be selected:
 
 #### Safe mode
 Safe mode LED indication: Blue <br/>
@@ -150,36 +154,38 @@ Driving mode LED indication: Green <br/>
 ![Driving Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Driving.PNG)
 #### Manipulator control
 Manipulator control LED indication: Yellow  
-Joint selection vibration indication: joint 2 = 0.1s, joint 3 = 0.3s, joint 4 = 0.5s<br/>
+Joint selection vibration indication: joint 2 = 0.1s, joint 3 = 0.3s<br/>
 <br/>
 ![Manipulator Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Manipulator.PNG)
 #### Teach mode
 Teach mode Idle LED indication: Light Blue  
 Teach mode Recording LED indication: Red  
 Teach mode Playback LED indication: Purple
+
 **Caution: turning off manipulator's motors will cause the manipulator to collapse**<br/>
 <br/>
 ![Teach Mode Controller](https://raw.githubusercontent.com/ut-ims-robotics/youbot_ux/main/Images/Teach.PNG)
 
 ## Shutting down
 
-If the controller is to be used, shutting down of ROS nodes is by pressing the "share" and "options" key on the controller while in "safe mode" regime of the robot. After doing so, the LED light on the controller should become very dimly lit blue, indicating that most nodes, except for /rosout, should be turned off. 
+If the controller is to be used, shutting down of ROS nodes is done by pressing the "share" and "options" key on the controller while in the "safe mode" regime of the robot. After doing so, the LED light on the controller should become very dimly lit blue, indicating that most nodes, except for /rosout, should be turned off. 
 
-Even though nodes can be turned off with a controller, the on-board computer can't. That can be done via SSH by connecting to it from another computer that is on the same network as the robot with the command "ssh bench5atimsr@<youbotIP>". After connecting to the robot's on-board computer, it can be shut down with the command "sudo shutdown -h now".
+Even though nodes can be turned off with the controller, the on-board computer can't. That can be done by connecting a screen and a keyboard to the on-board computer or via SSH (if previously enabled) by connecting to it from another computer that is on the same network as the robot with the command "ssh &lt;username&gt;@&lt;youbotIP&gt;". After connecting to the robot's on-board computer, it can be shut down with the command "sudo shutdown -h now".
   
 After turning off the computer, the power to the robot can be turned off via the system menu on top of the robot's base by selecting "system off".
   
-Don't forget to disconnect the battery, if connected.
+**Don't forget to disconnect the battery, if connected.**
 
+# Troubleshooting  
 ## Manipulator moving to a wrong location during calibration
 
-Turn the system completely off  (PC off, motors off), remove the battery, external power, put the manipulator into its correct calibrated position.
+Turn the system completely off (PC off, motors off), remove the battery, external power, put the manipulator into its correct calibrated position.
 Without power, press the button used to turn systems on as a precaution. After that, turn everything back on as per usual.
   
 ## Driver requiring root rights
   
 Use the following:
-  
+ 
 ```bash
 $ cd ~
 $ sudo setcap cap_net_raw+ep ~/catkin_ws/devel/.private/youbot_driver_ros_interface/lib/youbot_driver_ros_interface/youbot_driver_ros_interface
